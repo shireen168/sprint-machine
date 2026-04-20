@@ -12,7 +12,7 @@ export function useSupabaseClient() {
     {
       global: {
         fetch: async (url, options = {}) => {
-          const token = await session?.getToken({ template: 'supabase' })
+          const token = await session?.getToken()
           const headers = new Headers(options?.headers)
           if (token) headers.set('Authorization', `Bearer ${token}`)
           return fetch(url, { ...options, headers })

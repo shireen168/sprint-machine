@@ -70,13 +70,13 @@ alter table public.sprint_reviews enable row level security;
 alter table public.api_usage_log enable row level security;
 
 create policy "users: own row" on public.users
-  for all using (id = auth.uid());
+  for all using (id = auth.jwt()->>'sub');
 
 create policy "sprints: own rows" on public.sprints
-  for all using (user_id = auth.uid());
+  for all using (user_id = auth.jwt()->>'sub');
 
 create policy "sprint_reviews: own rows" on public.sprint_reviews
-  for all using (user_id = auth.uid());
+  for all using (user_id = auth.jwt()->>'sub');
 
 create policy "api_usage_log: own rows" on public.api_usage_log
-  for all using (user_id = auth.uid());
+  for all using (user_id = auth.jwt()->>'sub');
