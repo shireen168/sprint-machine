@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@clerk/nextjs/server'
-import { createUserServerClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import type { DbSprint } from '@/lib/supabase/types'
 import { SprintDocLayout } from '@/components/sprint/sprint-doc-layout'
 import { OfferSection } from '@/components/sprint/sections/offer-section'
@@ -15,24 +15,20 @@ interface PageProps {
 }
 
 export default async function SprintPage({ params }: PageProps) {
-  const { userId, getToken } = await auth()
+  const { userId } = await auth()
 
   if (!userId) {
     redirect('/sign-in')
   }
 
-  const token = await getToken({ template: 'supabase' })
-  if (!token) {
-    redirect('/sign-in')
-  }
-
-  const client = createUserServerClient(token)
+  const client = createServiceClient()
   const { id } = await params
 
   const { data, error } = await client
     .from('sprints')
     .select('*')
     .eq('id', id)
+    .eq('user_id', userId)
     .single()
 
   if (error || !data) {
