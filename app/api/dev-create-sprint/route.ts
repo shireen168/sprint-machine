@@ -47,6 +47,13 @@ export async function POST(request: Request) {
 
   const client = createServiceClient()
 
+  // Ensure user exists
+  await client
+    .from('users')
+    .upsert({ id: userId, tier: 'free' } as any, { onConflict: 'id' })
+    .select()
+    .single()
+
   const result = await client
     .from('sprints')
     .insert({
