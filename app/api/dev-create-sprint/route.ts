@@ -39,7 +39,7 @@ const mockOutput = {
 }
 
 export async function POST(request: Request) {
-  const { userId } = await auth()
+  const { userId, sessionClaims } = await auth()
 
   if (!userId) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
@@ -48,9 +48,10 @@ export async function POST(request: Request) {
   const client = createServiceClient()
 
   // Ensure user exists
+  const userEmail = (sessionClaims?.email as string) || 'unknown@example.com'
   await client
     .from('users')
-    .upsert({ id: userId, tier: 'free' } as any, { onConflict: 'id' })
+    .upsert({ id: userId, email: userEmail, tier: 'free' } as any, { onConflict: 'id' })
     .select()
     .single()
 

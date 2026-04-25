@@ -64,19 +64,8 @@ create trigger sprints_updated_at
   before update on public.sprints
   for each row execute function update_updated_at();
 
-alter table public.users enable row level security;
-alter table public.sprints enable row level security;
+-- Only enable RLS on client-facing tables; backend tables are server-only
 alter table public.sprint_reviews enable row level security;
-alter table public.api_usage_log enable row level security;
-
-create policy "users: own row" on public.users
-  for all using (id = auth.jwt()->>'sub');
-
-create policy "sprints: own rows" on public.sprints
-  for all using (user_id = auth.jwt()->>'sub');
 
 create policy "sprint_reviews: own rows" on public.sprint_reviews
-  for all using (user_id = auth.jwt()->>'sub');
-
-create policy "api_usage_log: own rows" on public.api_usage_log
   for all using (user_id = auth.jwt()->>'sub');
