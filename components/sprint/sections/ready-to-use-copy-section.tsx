@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { getChannelColor } from '@/lib/channel-colors';
 
 interface CopyBlock {
   day: string;
@@ -45,10 +46,13 @@ export function ReadyToUseCopySection({ value, onRegenerate }: ReadyToUseCopySec
 
   return (
     <section id="ready-to-use-copy" className="scroll-mt-20 py-12 border-t border-[rgba(255,255,255,0.07)]">
-      <h2 className="font-display text-3xl font-bold text-white mb-6">Ready-to-Use Copy</h2>
+      <div className="mb-6">
+        <h2 className="font-display text-3xl font-bold text-white mb-2">Ready-to-Use Copy</h2>
+        <p className="text-text-2 text-sm">Platform-specific posts ready to publish</p>
+      </div>
 
-      <div className="space-y-6">
-        <div className="space-y-4">
+      <div className="space-y-4">
+        <div className="space-y-3">
           {Array.isArray(value) && value.length > 0 ? (
             value.map((block, idx) => {
               const isExpanded = expanded.has(idx);
@@ -64,14 +68,19 @@ export function ReadyToUseCopySection({ value, onRegenerate }: ReadyToUseCopySec
                     <div className="flex-1 min-w-0">
                       <div className="text-sm text-gold font-medium mb-1">{block.day}</div>
                       <div className="flex gap-2 flex-wrap mb-3">
-                        <span className="px-2 py-1 rounded-full bg-surface-2 text-xs text-text-2">
-                          {block.platform}
-                        </span>
+                        {(() => {
+                          const platformColors = getChannelColor(block.platform);
+                          return (
+                            <span className={`px-2 py-1 rounded-full ${platformColors.bg} ${platformColors.text} text-xs`}>
+                              {block.platform}
+                            </span>
+                          );
+                        })()}
                         <span className="px-2 py-1 rounded-full bg-surface-2 text-xs text-text-2">
                           {block.format}
                         </span>
                       </div>
-                      <p className={`text-text-1 text-sm ${isExpanded || !isLong ? '' : 'line-clamp-3'}`}>
+                      <p className={`text-text-1 text-sm ${!isExpanded && isLong ? 'line-clamp-3' : ''}`}>
                         {block.caption}
                       </p>
                     </div>

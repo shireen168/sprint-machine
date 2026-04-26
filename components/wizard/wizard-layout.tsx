@@ -18,11 +18,11 @@ export function WizardLayout({
   isLoading = false,
   children,
 }: WizardLayoutProps) {
-  const step = WIZARD_STEPS[currentStep];
+  const step = currentStep === 8 ? { ...WIZARD_STEPS[7], label: 'Review Your Answers', description: 'Confirm your details before generating your sprint', step: 9 } : WIZARD_STEPS[currentStep];
   if (!step) return null;
 
   const isFirstStep = currentStep === 0;
-  const isLastStep = currentStep === 7;
+  const isLastStep = currentStep === 8;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isLoading) {
@@ -41,7 +41,7 @@ export function WizardLayout({
         <div className="max-w-2xl mx-auto">
           {/* Progress indicator */}
           <div className="text-sm text-white/50 mb-1">
-            Step {step.step} of 8
+            Step {currentStep === 8 ? 9 : step.step} of 9
           </div>
 
           {/* Progress bar */}
@@ -49,7 +49,7 @@ export function WizardLayout({
             <div
               className="h-full transition-all duration-300"
               style={{
-                width: `${((currentStep + 1) / 8) * 100}%`,
+                width: `${((currentStep + 1) / 9) * 100}%`,
                 backgroundColor: step.color,
               }}
             />
@@ -69,11 +69,14 @@ export function WizardLayout({
       </div>
 
       {/* Form content */}
-      <div className="flex-1 overflow-y-auto px-6 py-3">
+      <div className="overflow-y-auto px-6 py-3">
         <div className="max-w-2xl mx-auto w-full">
           {children}
         </div>
       </div>
+
+      {/* Minimal spacer */}
+      <div className="h-4" />
 
       {/* Navigation footer */}
       <div className="border-t border-white/10 px-6 py-2">
@@ -96,7 +99,7 @@ export function WizardLayout({
               color: '#000',
             }}
           >
-            {isLastStep ? 'Generate Sprint' : 'Next'}
+            {currentStep === 8 ? 'Generate Sprint' : 'Next'}
           </Button>
         </div>
       </div>

@@ -78,7 +78,7 @@ export function Step6Tried({
           onChange={(e) => onDetailsChange(e.target.value.slice(0, maxDetailsLength))}
           placeholder="E.g., Paid ads worked well but expensive, content marketing didn't gain traction"
           maxLength={maxDetailsLength}
-          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 resize-none"
+          className="w-full h-20 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 resize-none"
           rows={1}
         />
         <div className="text-xs text-white/50 mt-2 text-right">

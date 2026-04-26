@@ -20,7 +20,7 @@ export function Step8Extra({ value, onChange, error }: Step8ExtraProps) {
           onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
           placeholder="E.g., Launching next month, team of 3, targeting enterprise, seasonal business"
           maxLength={maxLength}
-          className="w-full h-8 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 resize-none"
+          className="w-full h-20 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 resize-none"
         />
         <div className="text-xs text-white/50 mt-1 text-right">
           {value.length} / {maxLength}

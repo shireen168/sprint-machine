@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, RefreshCw } from 'lucide-react';
+import { getChannelColor } from '@/lib/channel-colors';
 
 interface ChannelStrategySectionProps {
-  value: string;
+  value: string | string[];
   onRegenerate?: () => void;
 }
 
@@ -13,17 +14,30 @@ export function ChannelStrategySection({ value, onRegenerate }: ChannelStrategyS
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(value);
+    const textToCopy = Array.isArray(value) ? value.join('\n') : value;
+    await navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const items = Array.isArray(value) ? value : value.split('\n').filter(line => line.trim());
+
   return (
     <section id="channel-strategy" className="scroll-mt-20 py-12 border-t border-[rgba(255,255,255,0.07)]">
-      <h2 className="font-display text-3xl font-bold text-white mb-6">Channel Strategy</h2>
-      <div className="space-y-6">
+      <div className="mb-6">
+        <h2 className="font-display text-3xl font-bold text-white mb-2">Channel Strategy</h2>
+        <p className="text-text-2 text-sm">Which platforms to prioritize and why</p>
+      </div>
+      <div className="space-y-4">
         <div className="rounded-lg bg-surface border border-[rgba(201,169,110,0.28)] p-6">
-          <p className="text-text-1 leading-relaxed whitespace-pre-wrap">{value}</p>
+          <ul className="space-y-2">
+            {items.map((item, idx) => (
+              <li key={idx} className="flex gap-3 text-text-1">
+                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="flex gap-3">
           <Button

@@ -14,6 +14,7 @@ import { Step5Budget } from '@/components/wizard/steps/step-5-budget';
 import { Step6Tried } from '@/components/wizard/steps/step-6-tried';
 import { Step7Differentiator } from '@/components/wizard/steps/step-7-differentiator';
 import { Step8Extra } from '@/components/wizard/steps/step-8-extra';
+import { StepPreview } from '@/components/wizard/steps/step-preview';
 import { GenerationLoading } from '@/components/wizard/generation-loading';
 import { Button } from '@/components/ui/button';
 
@@ -25,8 +26,8 @@ export default function NewSprintPage() {
 
   const handleNext = async () => {
     console.log('handleNext called, currentStep:', form.currentStep);
-    if (form.currentStep === 7) {
-      // Last step: submit
+    if (form.currentStep === 8) {
+      // Preview step: submit
       console.log('Submitting form...');
       await handleSubmit();
     } else {
@@ -143,6 +144,12 @@ export default function NewSprintPage() {
             value={currentValue as string}
             onChange={(v) => form.setField('extra', v)}
             error={currentError}
+          />
+        );
+      case 8:
+        return (
+          <StepPreview
+            values={form.values}
           />
         );
       default:

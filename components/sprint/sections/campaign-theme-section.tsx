@@ -20,7 +20,10 @@ export function CampaignThemeSection({ value, onRegenerate }: CampaignThemeSecti
 
   return (
     <section id="campaign-theme" className="scroll-mt-20 py-12 border-t border-[rgba(255,255,255,0.07)]">
-      <h2 className="font-display text-3xl font-bold text-white mb-6">Campaign Theme</h2>
+      <div className="mb-6">
+        <h2 className="font-display text-3xl font-bold text-white mb-2">Campaign Theme</h2>
+        <p className="text-text-2 text-sm">The unifying angle for all marketing this month</p>
+      </div>
       <div className="space-y-6">
         <div className="rounded-lg bg-surface border border-[rgba(201,169,110,0.28)] p-6">
           <p className="text-text-1 leading-relaxed whitespace-pre-wrap">{value}</p>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Copy, RefreshCw } from 'lucide-react';
 
 interface SuccessMetricSectionProps {
-  value: string;
+  value: string | string[];
   onRegenerate?: () => void;
 }
 
@@ -13,17 +13,30 @@ export function SuccessMetricSection({ value, onRegenerate }: SuccessMetricSecti
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(value);
+    const textToCopy = Array.isArray(value) ? value.join('\n') : value;
+    await navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const items = Array.isArray(value) ? value : value.split('\n').filter(line => line.trim());
+
   return (
     <section id="success-metric" className="scroll-mt-20 py-12 border-t border-[rgba(255,255,255,0.07)]">
-      <h2 className="font-display text-3xl font-bold text-white mb-6">30-Day Success Metric</h2>
-      <div className="space-y-6">
+      <div className="mb-6">
+        <h2 className="font-display text-3xl font-bold text-white mb-2">30-Day Success Metrics</h2>
+        <p className="text-text-2 text-sm">Specific, measurable goals for this sprint</p>
+      </div>
+      <div className="space-y-4">
         <div className="rounded-lg bg-surface border border-[rgba(201,169,110,0.28)] p-6">
-          <p className="text-text-1 leading-relaxed whitespace-pre-wrap">{value}</p>
+          <ul className="space-y-2">
+            {items.map((item, idx) => (
+              <li key={idx} className="flex gap-3 text-text-1">
+                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="flex gap-3">
           <Button

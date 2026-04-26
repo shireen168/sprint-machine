@@ -6,28 +6,29 @@ export function useActiveSection() {
   const [activeId, setActiveId] = useState(SECTION_IDS[0]);
 
   useEffect(() => {
-    const observers = new Map<string, IntersectionObserver>();
+    const elements = SECTION_IDS.map((id) => ({
+      id,
+      element: document.getElementById(id),
+    })).filter((item) => item.element);
 
-    SECTION_IDS.forEach((id) => {
-      const element = document.getElementById(id);
-      if (!element) return;
+    if (elements.length === 0) return;
 
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveId(id);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.target.id) {
+            setActiveId(entry.target.id);
           }
-        },
-        { threshold: 0.4, rootMargin: '-60px 0px -66%' }
-      );
+        });
+      },
+      { threshold: [0], rootMargin: '-50% 0px -50% 0px' }
+    );
 
-      observer.observe(element);
-      observers.set(id, observer);
+    elements.forEach((item) => {
+      if (item.element) observer.observe(item.element);
     });
 
-    return () => {
-      observers.forEach((observer) => observer.disconnect());
-    };
+    return () => observer.disconnect();
   }, []);
 
   return activeId;

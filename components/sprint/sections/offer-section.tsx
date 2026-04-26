@@ -20,7 +20,10 @@ export function OfferSection({ value, onRegenerate }: OfferSectionProps) {
 
   return (
     <section id="offer" className="scroll-mt-20 py-12">
-      <h2 className="font-display text-3xl font-bold text-gold mb-6">Your Offer</h2>
+      <div className="mb-6">
+        <h2 className="font-display text-3xl font-bold text-gold mb-2">Your Offer</h2>
+        <p className="text-text-2 text-sm">What your target customer gets from you</p>
+      </div>
       <div className="space-y-6">
         <div className="rounded-lg bg-surface border border-[rgba(201,169,110,0.28)] p-6">
           <p className="text-text-1 leading-relaxed whitespace-pre-wrap">{value}</p>

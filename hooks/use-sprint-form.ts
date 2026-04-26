@@ -77,7 +77,7 @@ export function useSprintForm(): UseSprintFormReturn {
     // Clear error and advance
     setState((prev) => ({
       ...prev,
-      currentStep: Math.min(prev.currentStep + 1, 7),
+      currentStep: Math.min(prev.currentStep + 1, 8),
       errors: {},
     }));
     return true;
