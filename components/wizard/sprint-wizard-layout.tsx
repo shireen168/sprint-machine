@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSprintForm } from '@/hooks/use-sprint-form';
 import { WIZARD_STEPS } from '@/lib/sprint-wizard-config';
@@ -23,13 +23,23 @@ interface SprintWizardLayoutProps {
   initialValues?: IntakeValues;
   sprintId?: string;
   guestMode?: boolean;
+  initialStep?: number;
 }
 
-export function SprintWizardLayout({ editMode = false, initialValues, sprintId, guestMode = false }: SprintWizardLayoutProps) {
+export function SprintWizardLayout({ editMode = false, initialValues, sprintId, guestMode = false, initialStep = 0 }: SprintWizardLayoutProps) {
   const router = useRouter();
   const form = useSprintForm(initialValues);
   const [isGenerating, setIsGenerating] = useState(false);
   const [genError, setGenError] = useState('');
+
+  // Jump to initial step on mount
+  useEffect(() => {
+    if (initialStep > 0) {
+      for (let i = 0; i < initialStep; i++) {
+        form.goNext();
+      }
+    }
+  }, []);
 
   const handleNext = async () => {
     if (form.currentStep === 8) {
