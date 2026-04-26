@@ -78,8 +78,23 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     const { id } = await params;
-    const intake = (await request.json()) as IntakeValues;
+    const body = await request.json();
     const supabase = createServiceClient() as any;
+
+    // Handle partial updates (section edits)
+    if (body.partialUpdate && body.output) {
+      const { error } = await supabase
+        .from('sprints')
+        .update({ output: body.output })
+        .eq('id', id)
+        .eq('user_id', userId);
+
+      if (error) throw new Error('Failed to update sprint');
+      return NextResponse.json({ success: true });
+    }
+
+    // Handle full regeneration (from edit wizard)
+    const intake = body as IntakeValues;
 
     await supabase.from('sprints').update({ status: 'generating', intake, output: null }).eq('id', id).eq('user_id', userId);
 
@@ -107,6 +122,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const { id } = await params;
     const supabase = createServiceClient() as any;
     await supabase.from('sprints').update({ status: 'failed' }).eq('id', id);
-    return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Operation failed' }, { status: 500 });
   }
 }
