@@ -30,7 +30,7 @@ export default async function DashboardPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold text-text-1">Your Sprints</h1>
-          <p className="mt-1 text-text-2">Marketing sprints, newest first.</p>
+          <p className="mt-1 text-text-2">Latest sprints appear first.</p>
         </div>
         <Link href="/sprint/new" className={buttonClass}>
           New Sprint
@@ -63,9 +63,11 @@ export default async function DashboardPage() {
                 const statusColor =
                   sprint.status === 'complete'
                     ? 'text-green-400'
-                    : sprint.status === 'generating'
+                    : sprint.status === 'draft'
                       ? 'text-yellow-400'
-                      : 'text-red-400';
+                      : sprint.status === 'generating'
+                        ? 'text-blue-400'
+                        : 'text-red-400';
 
                 const createdDate = new Date(sprint.created_at).toLocaleDateString(
                   'en-US',
