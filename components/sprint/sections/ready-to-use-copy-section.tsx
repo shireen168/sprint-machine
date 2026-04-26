@@ -80,7 +80,7 @@ export function ReadyToUseCopySection({ value, onRegenerate }: ReadyToUseCopySec
                           {block.format}
                         </span>
                       </div>
-                      <p className={`text-text-1 text-sm ${!isExpanded && isLong ? 'line-clamp-3' : ''}`}>
+                      <p className={`text-text-1 text-sm whitespace-pre-wrap ${!isExpanded && isLong ? 'line-clamp-3' : ''}`}>
                         {block.caption}
                       </p>
                     </div>
