@@ -7,23 +7,26 @@ export default async function LandingPage() {
   if (userId) redirect('/dashboard')
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-      <h1 className="text-4xl font-bold">Sprint Machine</h1>
-      <p className="max-w-md text-muted-foreground">
-        Your 30-day AI marketing co-pilot. Plan, generate, and review sprints - faster.
-      </p>
-      <div className="flex gap-4">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8 text-center">
+      <div className="space-y-4 max-w-lg">
+        <h1 className="text-5xl font-bold">Sprint Machine</h1>
+        <p className="text-lg text-white/70">
+          Your AI marketing co-pilot. Generate complete 30-day marketing sprints in minutes.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3 w-full max-w-xs">
         <Link
-          href="/sign-up"
-          className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          href="/try"
+          className="rounded-md bg-gold text-background px-6 py-3 text-sm font-medium hover:bg-gold/90 transition-colors"
         >
-          Get started
+          Try it free (no sign-up)
         </Link>
         <Link
-          href="/sign-in"
-          className="rounded-md border px-6 py-2 text-sm font-medium hover:bg-accent"
+          href="/sign-up"
+          className="rounded-md border border-white/20 text-white px-6 py-3 text-sm font-medium hover:bg-white/10 transition-colors"
         >
-          Sign in
+          Create account
         </Link>
       </div>
     </main>

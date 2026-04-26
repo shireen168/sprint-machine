@@ -22,9 +22,10 @@ interface SprintWizardLayoutProps {
   editMode?: boolean;
   initialValues?: IntakeValues;
   sprintId?: string;
+  guestMode?: boolean;
 }
 
-export function SprintWizardLayout({ editMode = false, initialValues, sprintId }: SprintWizardLayoutProps) {
+export function SprintWizardLayout({ editMode = false, initialValues, sprintId, guestMode = false }: SprintWizardLayoutProps) {
   const router = useRouter();
   const form = useSprintForm(initialValues);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -43,7 +44,29 @@ export function SprintWizardLayout({ editMode = false, initialValues, sprintId }
     setGenError('');
 
     try {
-      if (editMode && sprintId) {
+      if (guestMode) {
+        // Guest mode: generate without saving to DB
+        const response = await fetch('/api/generate-sprint-guest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(form.values),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Generation failed');
+        }
+
+        // Store output in sessionStorage and redirect to guest result page
+        sessionStorage.setItem('guest_sprint', JSON.stringify({
+          intake: form.values,
+          output: data.output,
+          generatedAt: new Date().toISOString(),
+        }));
+
+        form.clearDraft();
+        await router.push('/try/result');
+      } else if (editMode && sprintId) {
         // Update existing sprint
         const response = await fetch(`/api/sprints/${sprintId}`, {
           method: 'PATCH',

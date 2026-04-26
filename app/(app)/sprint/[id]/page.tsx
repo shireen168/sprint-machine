@@ -62,6 +62,17 @@ export default async function SprintPage({ params }: PageProps) {
     )
   }
 
+  if (!output || Object.keys(output).length === 0) {
+    return (
+      <SprintDocLayout sprintId={id}>
+        <div className="rounded-lg bg-yellow-900/20 border border-yellow-800/50 p-6">
+          <h2 className="text-lg font-semibold text-yellow-400 mb-2">Sprint Still Processing</h2>
+          <p className="text-yellow-300">Your sprint output is not yet available. Please refresh the page or try again in a moment.</p>
+        </div>
+      </SprintDocLayout>
+    )
+  }
+
   return (
     <SprintDocLayout sprintId={id}>
       <OfferSection value={output.offer || ''} />
