@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       .from('sprints')
       .insert({
         user_id: userId,
-        title: `30-Day Sprint: ${intake.product}`,
+        title: `${intake.product} - ${intake.goal}`,
         goal: intake.goal,
         channels: intake.platforms,
         intake,

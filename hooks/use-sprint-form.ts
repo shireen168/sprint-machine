@@ -22,9 +22,9 @@ interface UseSprintFormReturn extends UseSprintFormState {
   clearDraft: () => void;
 }
 
-export function useSprintForm(initialValues?: IntakeValues): UseSprintFormReturn {
+export function useSprintForm(initialValues?: IntakeValues, initialStep: number = 0): UseSprintFormReturn {
   const [state, setState] = useState<UseSprintFormState>({
-    currentStep: 0,
+    currentStep: initialStep,
     values: initialValues || emptyIntake(),
     errors: {},
     isSubmitting: false,

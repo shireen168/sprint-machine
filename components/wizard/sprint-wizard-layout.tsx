@@ -28,18 +28,9 @@ interface SprintWizardLayoutProps {
 
 export function SprintWizardLayout({ editMode = false, initialValues, sprintId, guestMode = false, initialStep = 0 }: SprintWizardLayoutProps) {
   const router = useRouter();
-  const form = useSprintForm(initialValues);
+  const form = useSprintForm(initialValues, initialStep);
   const [isGenerating, setIsGenerating] = useState(false);
   const [genError, setGenError] = useState('');
-
-  // Jump to initial step on mount
-  useEffect(() => {
-    if (initialStep > 0) {
-      for (let i = 0; i < initialStep; i++) {
-        form.goNext();
-      }
-    }
-  }, []);
 
   const handleNext = async () => {
     if (form.currentStep === 8) {
