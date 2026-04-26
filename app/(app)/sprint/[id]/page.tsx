@@ -40,7 +40,7 @@ export default async function SprintPage({ params }: PageProps) {
 
   if (sprint.status === 'generating') {
     return (
-      <SprintDocLayout>
+      <SprintDocLayout sprintId={id}>
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold mb-4"></div>
@@ -53,7 +53,7 @@ export default async function SprintPage({ params }: PageProps) {
 
   if (sprint.status === 'failed') {
     return (
-      <SprintDocLayout>
+      <SprintDocLayout sprintId={id}>
         <div className="rounded-lg bg-red-900/20 border border-red-800/50 p-6">
           <h2 className="text-lg font-semibold text-red-400 mb-2">Generation Failed</h2>
           <p className="text-red-300">Something went wrong generating your sprint. Please try again.</p>
@@ -63,7 +63,7 @@ export default async function SprintPage({ params }: PageProps) {
   }
 
   return (
-    <SprintDocLayout>
+    <SprintDocLayout sprintId={id}>
       <OfferSection value={output.offer || ''} />
       <CampaignThemeSection value={output.campaign_theme || ''} />
       <ChannelStrategySection value={output.channel_strategy || ''} />

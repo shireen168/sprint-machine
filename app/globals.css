@@ -103,3 +103,39 @@
     font-family: 'Bricolage Grotesque', sans-serif;
   }
 }
+
+@media print {
+  nav, aside, .sprint-sidebar, .sprint-nav {
+    display: none !important;
+  }
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 40px !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  button:has-text("Copy"), button:has-text("Regenerate"), button:has-text("Download") {
+    display: none !important;
+  }
+  .text-gold {
+    color: #333 !important;
+  }
+  .text-text-1 {
+    color: black !important;
+  }
+  .text-text-2 {
+    color: #666 !important;
+  }
+  section {
+    page-break-inside: avoid;
+    margin-bottom: 30px;
+  }
+  h2 {
+    color: black !important;
+    margin-top: 0 !important;
+  }
+}

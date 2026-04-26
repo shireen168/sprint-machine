@@ -1,7 +1,11 @@
 'use client';
 
+import { DownloadPdfButton } from './download-pdf-button';
+import { EditSprintButton } from './edit-sprint-button';
+
 interface SprintSidebarProps {
   activeId: string;
+  sprintId?: string;
 }
 
 const SECTIONS = [
@@ -13,7 +17,7 @@ const SECTIONS = [
   { id: 'success-metric', label: '30-Day Success Metric' },
 ];
 
-export function SprintSidebar({ activeId }: SprintSidebarProps) {
+export function SprintSidebar({ activeId, sprintId }: SprintSidebarProps) {
   const handleClick = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: 'smooth' });
@@ -38,6 +42,10 @@ export function SprintSidebar({ activeId }: SprintSidebarProps) {
             </button>
           );
         })}
+        <div className="border-t border-[rgba(201,169,110,0.28)] pt-6 mt-6 space-y-2">
+          {sprintId && <EditSprintButton sprintId={sprintId} />}
+          <DownloadPdfButton />
+        </div>
       </nav>
     </aside>
   );

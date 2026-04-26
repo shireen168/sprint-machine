@@ -22,16 +22,17 @@ interface UseSprintFormReturn extends UseSprintFormState {
   clearDraft: () => void;
 }
 
-export function useSprintForm(): UseSprintFormReturn {
+export function useSprintForm(initialValues?: IntakeValues): UseSprintFormReturn {
   const [state, setState] = useState<UseSprintFormState>({
     currentStep: 0,
-    values: emptyIntake(),
+    values: initialValues || emptyIntake(),
     errors: {},
     isSubmitting: false,
   });
 
-  // Load draft on mount
+  // Load draft on mount (only if not editing)
   useEffect(() => {
+    if (initialValues) return;
     const draft = localStorage.getItem(DRAFT_KEY);
     if (draft) {
       try {
@@ -45,7 +46,7 @@ export function useSprintForm(): UseSprintFormReturn {
         // Ignore parse errors, use fresh state
       }
     }
-  }, []);
+  }, [initialValues]);
 
   // Auto-save draft on value change
   useEffect(() => {

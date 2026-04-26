@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
 import { createServiceClient } from '@/lib/supabase/server';
+import { DeleteSprintButton } from '@/components/dashboard/delete-sprint-button';
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -29,7 +30,7 @@ export default async function DashboardPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold text-text-1">Your Sprints</h1>
-          <p className="mt-1 text-text-2">Each sprint is your complete 30-day marketing plan.</p>
+          <p className="mt-1 text-text-2">Marketing sprints, newest first.</p>
         </div>
         <Link href="/sprint/new" className={buttonClass}>
           New Sprint
@@ -39,47 +40,70 @@ export default async function DashboardPage() {
       {!hasSprints ? (
         <div className="rounded-xl border border-border-gold bg-surface p-12 text-center shadow-glow-rest">
           <p className="font-display text-xl text-text-1">No sprints yet</p>
-          <p className="mt-2 text-text-2">Create your first sprint to get your 30-day marketing plan.</p>
+          <p className="mt-2 text-text-2">Create your first marketing sprint to get started.</p>
           <Link href="/sprint/new" className={`mt-6 ${buttonClass}`}>
             Create first sprint
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sprints.map((sprint) => {
-            const statusColor =
-              sprint.status === 'complete'
-                ? 'text-green-400'
-                : sprint.status === 'generating'
-                  ? 'text-yellow-400'
-                  : 'text-red-400';
+        <div className="overflow-x-auto rounded-lg border border-border-gold">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border-gold bg-surface-2">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-text-2 w-12">#</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-text-2">Title</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-text-2">Goal</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-text-2 w-24">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-text-2 w-32">Created</th>
+                <th className="px-6 py-4 text-right text-xs font-semibold text-text-2 w-20">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sprints.map((sprint, idx) => {
+                const statusColor =
+                  sprint.status === 'complete'
+                    ? 'text-green-400'
+                    : sprint.status === 'generating'
+                      ? 'text-yellow-400'
+                      : 'text-red-400';
 
-            const createdDate = new Date(sprint.created_at).toLocaleDateString(
-              'en-US',
-              { month: 'short', day: 'numeric', year: 'numeric' }
-            );
+                const createdDate = new Date(sprint.created_at).toLocaleDateString(
+                  'en-US',
+                  { month: 'short', day: 'numeric', year: 'numeric' }
+                );
 
-            return (
-              <Link
-                key={sprint.id}
-                href={`/sprint/${sprint.id}`}
-                className="group rounded-lg border border-border-gold bg-surface p-6 hover:bg-surface-2 transition-colors shadow-glow-rest hover:shadow-glow-hover"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-display text-lg font-bold text-text-1 group-hover:text-gold transition-colors line-clamp-2">
-                      {sprint.title}
-                    </h3>
-                    <span className={`text-xs font-medium whitespace-nowrap ${statusColor}`}>
-                      {sprint.status}
-                    </span>
-                  </div>
-                  <p className="text-text-3 text-sm line-clamp-2">{sprint.goal}</p>
-                  <p className="text-text-3 text-xs">{createdDate}</p>
-                </div>
-              </Link>
-            );
-          })}
+                return (
+                  <tr key={sprint.id} className="border-b border-border-gold hover:bg-surface-2 transition-colors">
+                    <td className="px-6 py-4">
+                      <span className="font-display font-bold text-text-1">{idx + 1}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <Link
+                        href={`/sprint/${sprint.id}`}
+                        className="font-medium text-text-1 hover:text-gold transition-colors truncate block"
+                      >
+                        {sprint.title}
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-text-3 text-sm truncate">{sprint.goal}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`text-xs font-medium ${statusColor}`}>
+                        {sprint.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-text-3 text-sm">{createdDate}</p>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <DeleteSprintButton sprintId={sprint.id} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
