@@ -7,7 +7,7 @@ import { OfferSection } from '@/components/sprint/sections/offer-section'
 import { CampaignThemeSection } from '@/components/sprint/sections/campaign-theme-section'
 import { ChannelStrategySection } from '@/components/sprint/sections/channel-strategy-section'
 import { ContentCalendarSection } from '@/components/sprint/sections/content-calendar-section'
-import { ReadyToUseCopySection } from '@/components/sprint/sections/ready-to-use-copy-section'
+import { CopyPromptsSection } from '@/components/sprint/sections/copy-prompts-section'
 import { SuccessMetricSection } from '@/components/sprint/sections/success-metric-section'
 
 interface PageProps {
@@ -75,11 +75,15 @@ export default async function SprintPage({ params }: PageProps) {
 
   return (
     <SprintDocLayout sprintId={id}>
+      <div className="mb-8 pb-6 border-b border-border">
+        <h1 className="text-4xl font-bold text-text-1 mb-2">{sprint.title}</h1>
+        <p className="text-text-2 text-sm">30-Day Marketing Sprint Plan</p>
+      </div>
       <OfferSection value={output.offer || ''} />
       <CampaignThemeSection value={output.campaign_theme || ''} />
       <ChannelStrategySection value={output.channel_strategy || ''} />
       <ContentCalendarSection value={output.content_calendar || {}} />
-      <ReadyToUseCopySection value={output.ready_to_use_copy || []} />
+      <CopyPromptsSection value={output.copy_prompts || {}} />
       <SuccessMetricSection value={output.success_metric || ''} />
     </SprintDocLayout>
   )

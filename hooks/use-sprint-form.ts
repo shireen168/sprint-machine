@@ -30,23 +30,6 @@ export function useSprintForm(initialValues?: IntakeValues, initialStep: number 
     isSubmitting: false,
   });
 
-  // Load draft on mount (only if not editing)
-  useEffect(() => {
-    if (initialValues) return;
-    const draft = localStorage.getItem(DRAFT_KEY);
-    if (draft) {
-      try {
-        const parsed = JSON.parse(draft);
-        setState((prev) => ({
-          ...prev,
-          values: parsed.values || emptyIntake(),
-          currentStep: parsed.currentStep || 0,
-        }));
-      } catch {
-        // Ignore parse errors, use fresh state
-      }
-    }
-  }, [initialValues]);
 
   // Auto-save draft on value change
   useEffect(() => {

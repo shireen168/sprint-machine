@@ -1,12 +1,24 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 
 export function DownloadPdfButton() {
+  const params = useParams();
+  const sprintId = params.id as string;
+
   const handleDownload = () => {
-    const fileName = `sprint-${new Date().toISOString().split('T')[0]}.pdf`;
-    window.print();
+    if (sprintId) {
+      const printWindow = window.open(`/sprint/${sprintId}/print`, '_blank');
+      if (printWindow) {
+        printWindow.addEventListener('load', () => {
+          setTimeout(() => {
+            printWindow.print();
+          }, 500);
+        });
+      }
+    }
   };
 
   return (

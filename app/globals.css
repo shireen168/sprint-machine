@@ -115,11 +115,13 @@
 
 @media print {
   * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: unset !important;
+    print-color-adjust: unset !important;
+    color: #1a1a1a !important;
+    background: white !important;
   }
 
-  nav, aside, .sprint-sidebar, .sprint-nav, button {
+  nav, aside, .sprint-sidebar, .sprint-nav, button, [class*="button"], .flex.gap-3 {
     display: none !important;
   }
 
@@ -128,96 +130,126 @@
     height: 100%;
     margin: 0;
     padding: 0;
+    background: white !important;
+    color: #1a1a1a !important;
   }
 
   body {
-    background: white !important;
-    color: #1a1a1a !important;
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
   }
 
   main {
     width: 100%;
     max-width: 100%;
     margin: 0;
-    padding: 0;
-    background: white;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    color: #1a1a1a !important;
-    break-after: avoid;
+    padding: 40px;
+    background: white !important;
   }
 
   h1 {
     font-size: 28px;
-    margin-top: 0;
-    padding-top: 20px;
-    padding-bottom: 10px;
-    border-bottom: 3px solid #333;
+    font-weight: bold;
+    color: #1a1a1a !important;
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #C9A96E;
+    page-break-after: avoid;
   }
 
   h2 {
-    font-size: 18px;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1a1a1a !important;
+    margin: 24px 0 12px 0;
+    page-break-after: avoid;
   }
 
-  p, li {
-    color: #333 !important;
+  h3 {
+    font-size: 13px;
+    font-weight: bold;
+    color: #1a1a1a !important;
+    margin: 16px 0 8px 0;
+    page-break-after: avoid;
+  }
+
+  p {
+    color: #1a1a1a !important;
+    margin: 0 0 12px 0;
     line-height: 1.6;
     orphans: 3;
     widows: 3;
   }
 
-  section, article, div[class*="section"] {
+  section {
+    margin-bottom: 32px;
     page-break-inside: avoid;
-    margin-bottom: 20px;
   }
 
   ul, ol {
-    color: #333 !important;
-    margin-left: 20px;
-  }
-
-  .text-gold {
-    color: #666 !important;
-  }
-
-  .text-text-1 {
     color: #1a1a1a !important;
+    margin: 12px 0 12px 24px;
+    padding: 0;
   }
 
-  .text-text-2, .text-text-3 {
-    color: #555 !important;
+  li {
+    color: #1a1a1a !important;
+    margin-bottom: 8px;
+    line-height: 1.6;
   }
 
-  a {
-    color: #0066cc !important;
-    text-decoration: none;
+  div[class*="rounded-lg"],
+  div[class*="bg-surface"],
+  .rounded-lg {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    padding: 12px !important;
+    margin: 12px 0 !important;
+    page-break-inside: avoid;
   }
 
-  a[href]::after {
-    content: "";
+  .whitespace-pre-wrap {
+    white-space: pre-wrap !important;
+    color: #1a1a1a !important;
   }
 
   table {
-    border-collapse: collapse;
     width: 100%;
-    margin: 15px 0;
+    border-collapse: collapse;
+    margin: 16px 0;
+    page-break-inside: avoid;
   }
 
-  table, th, td {
-    border: 1px solid #999 !important;
+  thead {
+    background: #f5f5f5 !important;
   }
 
   th {
-    background: #f0f0f0 !important;
+    background: #f5f5f5 !important;
     color: #1a1a1a !important;
     font-weight: bold;
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #999 !important;
   }
 
   td {
     padding: 8px;
-    color: #333 !important;
+    color: #1a1a1a !important;
+    border: 1px solid #999 !important;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: #0066cc;
+    text-decoration: underline;
+  }
+
+  a[href]::after {
+    content: "";
   }
 }

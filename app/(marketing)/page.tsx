@@ -1,34 +1,31 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { HeroSection, FeaturesSection, SocialProofSection, FAQSection, FinalCTASection } from '@/components/marketing/landing'
 
 export default async function LandingPage() {
   const { userId } = await auth()
   if (userId) redirect('/dashboard')
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8 text-center">
-      <div className="space-y-4 max-w-lg">
-        <h1 className="text-5xl font-bold">Sprint Machine</h1>
-        <p className="text-lg text-white/70">
-          Your AI marketing co-pilot. Generate complete 30-day marketing sprints in minutes.
-        </p>
-      </div>
+    <>
+      <main className="flex flex-col">
+        <HeroSection />
+        <FeaturesSection />
+        <SocialProofSection />
+        <FAQSection />
+        <FinalCTASection />
+      </main>
 
-      <div className="flex flex-col gap-3 w-full max-w-xs">
-        <Link
-          href="/try"
-          className="rounded-md bg-gold text-background px-6 py-3 text-sm font-medium hover:bg-gold/90 transition-colors"
-        >
-          Try it free (no sign-up)
-        </Link>
-        <Link
-          href="/sign-up"
-          className="rounded-md border border-white/20 text-white px-6 py-3 text-sm font-medium hover:bg-white/10 transition-colors"
-        >
-          Create account
-        </Link>
-      </div>
-    </main>
+      <footer className="relative z-10 flex items-center justify-center px-6 py-6 border-t border-[#7C3AED] border-opacity-20 bg-[#0a0a0f]">
+        <span className="text-xs text-center text-[#94A3B8]" style={{ fontFamily: "'DM Sans'" }}>
+          © {new Date().getFullYear()} Sprint Machine · Built by{' '}
+          <Link href="https://github.com/shireen168" target="_blank" rel="noopener noreferrer" className="text-[#C9A96E] hover:text-[#E8D5B0] transition-colors">
+            Shireen
+          </Link>
+          · Powered by Claude Code
+        </span>
+      </footer>
+    </>
   )
 }

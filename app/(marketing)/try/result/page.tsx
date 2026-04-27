@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { CampaignThemeSection } from '@/components/sprint/sections/campaign-theme-section';
 import { ChannelStrategySection } from '@/components/sprint/sections/channel-strategy-section';
 import { ContentCalendarSection } from '@/components/sprint/sections/content-calendar-section';
-import { ReadyToUseCopySection } from '@/components/sprint/sections/ready-to-use-copy-section';
+import { CopyPromptsSection } from '@/components/sprint/sections/copy-prompts-section';
 
 interface GuestSprint {
   intake: Record<string, any>;
@@ -74,7 +74,7 @@ export default function TryResultPage() {
         <CampaignThemeSection value={output.campaign_theme || ''} />
         <ChannelStrategySection value={output.channel_strategy || ''} />
         <ContentCalendarSection value={output.content_calendar || {}} />
-        <ReadyToUseCopySection value={output.ready_to_use_copy || []} />
+        <CopyPromptsSection value={output.copy_prompts || {}} />
 
         {/* Footer with try again link */}
         <div className="pt-8 border-t border-white/10 flex gap-4">

@@ -10,6 +10,34 @@ export type DbUser = {
   created_at: string
 }
 
+export interface ContentCalendarDay {
+  day: string
+  topic: string
+  platforms: string[]
+  format: string
+}
+
+export interface CopyDayPrompt {
+  week: string
+  day: string
+  platform: string
+  format: string
+  angle: string
+  hook: string
+  key_message: string
+  cta: string
+  prompt: string
+}
+
+export interface SprintOutput {
+  offer: string
+  campaign_theme: string
+  channel_strategy: string[]
+  content_calendar: Record<string, ContentCalendarDay[]>
+  copy_prompts: CopyDayPrompt[]
+  success_metric: string[]
+}
+
 export type DbSprint = {
   id: string
   user_id: string
