@@ -67,21 +67,25 @@ export function SocialProofSection() {
       initials: 'LS',
       quote: 'Sprint Machine saved me 20 hours per campaign. The copy is market-ready.',
       name: 'Laura S.',
+      title: 'Growth Marketing Manager',
     },
     {
       initials: 'MK',
       quote: 'Finally, a tool that understands strategy AND execution. Best investment this quarter.',
       name: 'Marcus K.',
+      title: 'Head of Content',
     },
     {
       initials: 'JD',
       quote: 'Shared our sprint with the entire team. Everyone aligned in minutes, not days.',
       name: 'Jasmine D.',
+      title: 'Marketing Director',
     },
     {
       initials: 'RV',
       quote: 'The consistency across channels is incredible. Our audience noticed the difference.',
       name: 'Raj V.',
+      title: 'Brand Strategist',
     },
   ]
 
@@ -105,8 +109,9 @@ export function SocialProofSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
+          <p className="text-xs tracking-widest uppercase text-[#C9A96E] mb-4 font-semibold">Social Proof</p>
           <h2 className="text-4xl font-bold text-[#F1F5F9] mb-4" style={{ fontFamily: "'Bricolage Grotesque'" }}>
-            Trusted by marketing leaders
+            Trusted by Marketing Leaders
           </h2>
         </motion.div>
 
@@ -135,7 +140,7 @@ export function SocialProofSection() {
                 visible: {
                   opacity: 1,
                   y: 0,
-                  transition: { duration: 0.6, ease: [0.175, 0.885, 0.32, 1.275] },
+                  transition: { duration: 0.6,  },
                 },
               }}
               whileHover={{ y: -6, boxShadow: '0 0 40px rgba(201,169,110,0.2)' }}
@@ -149,7 +154,7 @@ export function SocialProofSection() {
                 </div>
                 <div>
                   <p className="text-[#F1F5F9] text-sm font-medium">{testimonial.name}</p>
-                  <p className="text-[#94A3B8] text-xs">Marketing leader</p>
+                  <p className="text-[#94A3B8] text-xs">{(testimonial as any).title}</p>
                 </div>
               </div>
               <p className="text-[#F1F5F9]" style={{ fontFamily: "'DM Sans'", lineHeight: '1.7', fontSize: '14px' }}>

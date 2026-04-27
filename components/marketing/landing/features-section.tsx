@@ -19,7 +19,7 @@ function Feature({ number, title, description, align, icon }: FeatureProps) {
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.8, ease: [0.175, 0.885, 0.32, 1.275] }}
+      transition={{ duration: 0.8,  }}
     >
       {/* Text content */}
       <div className={`space-y-4 ${isLeft ? 'order-1 md:order-1' : 'order-1 md:order-2'}`}>
@@ -50,10 +50,13 @@ function Feature({ number, title, description, align, icon }: FeatureProps) {
         viewport={{ once: true, margin: '-100px' }}
         transition={{ delay: 0.2, duration: 0.8 }}
       >
-        <div className="w-64 h-64 rounded-lg border border-[#7C3AED] border-opacity-30 flex items-center justify-center relative overflow-hidden bg-[#16161d] bg-opacity-50">
+        <motion.div
+          className="w-64 h-64 rounded-lg border border-[#7C3AED] border-opacity-30 flex items-center justify-center relative overflow-hidden bg-[#16161d] bg-opacity-50 group cursor-pointer hover:border-opacity-100 transition-all"
+          whileHover={{ boxShadow: '0 0 24px rgba(124, 58, 237, 0.3)' }}
+        >
           {/* Animated placeholder visualization */}
           {icon}
-        </div>
+        </motion.div>
       </motion.div>
     </motion.div>
   )
@@ -160,11 +163,12 @@ export function FeaturesSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
+          <p className="text-xs tracking-widest uppercase text-[#C9A96E] mb-4 font-semibold">How It Works</p>
           <h2 className="text-4xl font-bold text-[#F1F5F9] mb-4" style={{ fontFamily: "'Bricolage Grotesque'" }}>
-            How It Works
+            Five Core Capabilities
           </h2>
           <p className="text-[#94A3B8] text-lg max-w-2xl mx-auto" style={{ fontFamily: "'DM Sans'", lineHeight: '1.7' }}>
-            Five core capabilities. One unified platform. Complete marketing strategy in minutes.
+            One unified platform. Complete marketing strategy in minutes.
           </p>
         </motion.div>
 

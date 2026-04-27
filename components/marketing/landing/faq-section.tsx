@@ -94,7 +94,7 @@ export function FAQSection() {
                     height: active === i ? 'auto' : 0,
                     opacity: active === i ? 1 : 0,
                   }}
-                  transition={{ duration: 0.3, ease: [0.175, 0.885, 0.32, 1.275] }}
+                  transition={{ duration: 0.3,  }}
                   className="overflow-hidden"
                 >
                   <p
