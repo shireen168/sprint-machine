@@ -17,13 +17,18 @@ export default async function LandingPage() {
         <FinalCTASection />
       </main>
 
-      <footer className="relative z-10 flex items-center justify-center px-6 py-6 border-t border-[#7C3AED] border-opacity-20 bg-[#0a0a0f]">
-        <span className="text-xs text-center text-[#94A3B8]" style={{ fontFamily: "'DM Sans'" }}>
+      <footer
+        className="relative z-10 flex items-center justify-center px-6 py-6"
+        style={{ borderTop: '1px solid rgba(0,200,255,0.12)', background: '#050A0E' }}
+      >
+        <span className="text-sm text-center" style={{ fontFamily: "'IBM Plex Sans'", color: '#7ABFDF' }}>
           © {new Date().getFullYear()} Sprint Machine · Built by{' '}
-          <Link href="https://github.com/shireen168" target="_blank" rel="noopener noreferrer" className="text-[#C9A96E] hover:text-[#E8D5B0] transition-colors">
+          <Link href="https://github.com/shireen168" target="_blank" rel="noopener noreferrer"
+            style={{ color: '#00C8FF' }}
+          >
             Shireen
           </Link>
-          · Powered by Claude Code
+          {' '}· Powered by Claude Code
         </span>
       </footer>
     </>

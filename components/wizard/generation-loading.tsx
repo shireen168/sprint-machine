@@ -20,81 +20,90 @@ export function GenerationLoading({ isVisible }: GenerationLoadingProps) {
 
   useEffect(() => {
     if (!isVisible) return;
-
-    // Advance steps every 2.5 seconds (6 steps * 2.5s = 15s total)
     const timer = setInterval(() => {
-      setCurrentStep((prev) => {
-        if (prev < GENERATION_STEPS.length - 1) {
-          return prev + 1;
-        }
-        return prev; // Stay on last step
-      });
+      setCurrentStep((prev) => (prev < GENERATION_STEPS.length - 1 ? prev + 1 : prev));
     }, 2500);
-
     return () => clearInterval(timer);
   }, [isVisible]);
 
   if (!isVisible) return null;
 
+  const progress = ((currentStep + 1) / GENERATION_STEPS.length) * 100;
+
   return (
-    <div className="fixed inset-0 bg-[#0a0a0f] z-50 flex items-center justify-center">
-      <div className="max-w-md mx-auto px-6 text-center">
-        {/* Title */}
-        <h2 className="text-2xl font-bold text-white mb-2">
-          Generating your sprint
-        </h2>
-        <p className="text-white/60 mb-8">
-          This takes about 15 seconds
-        </p>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ background: '#050A0E' }}
+    >
+      {/* Background glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(0,200,255,0.1) 0%, transparent 70%)' }}
+      />
 
-        {/* Steps list with animation */}
-        <div className="space-y-3 mb-8">
-          {GENERATION_STEPS.map((step, index) => (
-            <div
-              key={step}
-              className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                index <= currentStep
-                  ? 'bg-white/10 text-white'
-                  : 'bg-white/5 text-white/50'
-              }`}
-            >
-              <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all ${
-                  index < currentStep
-                    ? 'bg-white/50 border-white/50 text-[#0a0a0f]'
-                    : index === currentStep
-                      ? 'border-white/50 text-white animate-pulse'
-                      : 'border-white/20'
-                }`}
-              >
-                {index < currentStep ? '✓' : index === currentStep ? '◉' : ' '}
-              </div>
-              <span className="text-sm font-medium">{step}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Progress bar */}
-        <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+      <div className="max-w-md mx-auto px-6 text-center relative z-10">
+        {/* Animated cyan ring */}
+        <div className="flex justify-center mb-8">
           <div
-            className="h-full bg-gradient-to-r from-white/50 to-white/80 transition-all duration-500"
+            className="w-16 h-16 rounded-full border-2 animate-spin"
             style={{
-              width: `${((currentStep + 1) / GENERATION_STEPS.length) * 100}%`,
+              borderColor: 'rgba(0,200,255,0.15)',
+              borderTopColor: '#00C8FF',
             }}
           />
         </div>
 
-        {/* Animated dots */}
-        <div className="flex justify-center gap-2 mt-8">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="w-2 h-2 rounded-full bg-white/40 animate-pulse"
-              style={{
-                animationDelay: `${i * 0.3}s`,
-              }}
-            />
-          ))}
+        <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Exo 2'", color: '#EEF6FF' }}>
+          Generating your sprint
+        </h2>
+        <p className="text-base mb-8" style={{ fontFamily: "'IBM Plex Sans'", color: '#7ABFDF' }}>
+          This takes about 15 seconds
+        </p>
+
+        {/* Progress steps */}
+        <div className="space-y-2.5 mb-8 text-left">
+          {GENERATION_STEPS.map((label, i) => {
+            const isDone = i < currentStep;
+            const isActive = i === currentStep;
+            return (
+              <div
+                key={label}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-500"
+                style={{
+                  background: isActive ? 'rgba(0,200,255,0.1)' : isDone ? 'rgba(0,200,255,0.05)' : 'rgba(0,200,255,0.03)',
+                  border: `1px solid ${isActive ? 'rgba(0,200,255,0.4)' : isDone ? 'rgba(0,200,255,0.2)' : 'rgba(0,200,255,0.08)'}`,
+                }}
+              >
+                <div
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all"
+                  style={{
+                    background: isDone ? '#00C8FF' : isActive ? 'rgba(0,200,255,0.2)' : 'transparent',
+                    border: `1.5px solid ${isDone ? '#00C8FF' : isActive ? '#00C8FF' : 'rgba(0,200,255,0.2)'}`,
+                    color: isDone ? '#050A0E' : '#00C8FF',
+                  }}
+                >
+                  {isDone ? '✓' : isActive ? '◉' : ' '}
+                </div>
+                <span
+                  className="text-base font-medium"
+                  style={{
+                    fontFamily: "'IBM Plex Sans'",
+                    color: isActive ? '#EEF6FF' : isDone ? '#7ABFDF' : '#4A7C9A',
+                  }}
+                >
+                  {label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Progress bar */}
+        <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(0,200,255,0.1)' }}>
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${progress}%`, background: 'linear-gradient(to right, #00C8FF, #38FFD8)' }}
+          />
         </div>
       </div>
     </div>

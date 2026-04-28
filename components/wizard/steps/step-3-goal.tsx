@@ -19,47 +19,59 @@ export function Step3Goal({ value, onChange, error }: Step3GoalProps) {
   const stepConfig = WIZARD_STEPS[2];
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <fieldset>
-        <legend className="text-sm font-medium text-white/80 mb-2 block">
+        <legend
+          className="block font-semibold mb-3"
+          style={{ color: '#7ABFDF', fontFamily: "'Exo 2'", fontSize: '16px' }}
+        >
           Select your primary goal
         </legend>
-        <div className="space-y-2">
-          {GOAL_OPTIONS.map((option) => (
-            <label
-              key={option.value}
-              className={`flex items-center gap-3 p-2 rounded-lg border-2 cursor-pointer transition-all ${
-                value === option.value
-                  ? `border-[${stepConfig.color}] bg-white/10`
-                  : 'border-white/10 bg-white/5 hover:border-white/20'
-              }`}
-              style={{
-                borderColor:
-                  value === option.value
-                    ? stepConfig.color
-                    : 'rgba(255, 255, 255, 0.1)',
-                backgroundColor:
-                  value === option.value
-                    ? 'rgba(255, 255, 255, 0.1)'
-                    : 'rgba(255, 255, 255, 0.05)',
-              }}
-            >
-              <input
-                type="radio"
-                name="goal"
-                value={option.value}
-                checked={value === option.value}
-                onChange={(e) => onChange(e.target.value)}
-                className="w-4 h-4 accent-white"
-              />
-              <span className="text-white">{option.label}</span>
-            </label>
-          ))}
+        <div className="space-y-2.5">
+          {GOAL_OPTIONS.map((option) => {
+            const isSelected = value === option.value;
+            return (
+              <label
+                key={option.value}
+                className="flex items-center gap-4 px-4 py-3.5 rounded-xl cursor-pointer transition-all"
+                style={{
+                  borderWidth: '1.5px',
+                  borderStyle: 'solid',
+                  borderColor: isSelected ? stepConfig.color : 'rgba(0,200,255,0.15)',
+                  background: isSelected ? `${stepConfig.color}12` : '#091420',
+                  boxShadow: isSelected ? `0 0 16px ${stepConfig.color}25` : 'none',
+                }}
+              >
+                <input
+                  type="radio"
+                  name="goal"
+                  value={option.value}
+                  checked={isSelected}
+                  onChange={(e) => onChange(e.target.value)}
+                  className="w-4 h-4 shrink-0"
+                  style={{ accentColor: stepConfig.color }}
+                />
+                <span
+                  className="text-base font-medium"
+                  style={{
+                    fontFamily: "'IBM Plex Sans'",
+                    fontSize: '17px',
+                    color: isSelected ? '#EEF6FF' : '#7ABFDF',
+                  }}
+                >
+                  {option.label}
+                </span>
+              </label>
+            );
+          })}
         </div>
       </fieldset>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 text-red-200 text-sm">
+        <div
+          className="rounded-xl px-4 py-3"
+          style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#FCA5A5', fontFamily: "'IBM Plex Sans'", fontSize: '16px' }}
+        >
           {error}
         </div>
       )}

@@ -2,103 +2,72 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { Check } from 'lucide-react'
 
-function Counter({ end, label }: { end: number; label: string }) {
+const C = {
+  cyan: '#00C8FF',
+  bg: '#050A0E',
+  surface: '#091420',
+  surface2: '#0D1E30',
+  text1: '#EEF6FF',
+  text2: '#7ABFDF',
+  border: 'rgba(0,200,255,0.18)',
+}
+
+const STATS = [
+  { value: 8, suffix: '', label: 'Questions to start' },
+  { value: 30, suffix: '', label: 'Days per sprint' },
+  { value: 8, suffix: '+', label: 'Channels supported' },
+  { value: 15, suffix: ' min', label: 'To generate your plan' },
+]
+
+const INCLUDES = [
+  'Weekly marketing angle and hook per week',
+  'Platform-specific content strategy per channel',
+  'Message, CTA, and copy direction - fully written',
+  'Edit any week without regenerating the full sprint',
+  'Export as professional PDF, ready to share',
+  'No account required to generate your first sprint',
+]
+
+function Counter({ value, suffix, label }: { value: number; suffix: string; label: string }) {
   const [count, setCount] = useState(0)
-  const ref = useRef(null)
-  const hasAnimated = useRef(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const animated = useRef(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true
-          const duration = 2000
-          const startTime = Date.now()
-
-          const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4)
-
-          const animate = () => {
-            const elapsed = Date.now() - startTime
-            const progress = Math.min(elapsed / duration, 1)
-            const eased = easeOutQuart(progress)
-            setCount(Math.floor(eased * end))
-
-            if (progress < 1) {
-              requestAnimationFrame(animate)
-            }
+        if (entry.isIntersecting && !animated.current) {
+          animated.current = true
+          const duration = 1800
+          const start = Date.now()
+          const easeOut = (t: number) => 1 - Math.pow(1 - t, 4)
+          const tick = () => {
+            const progress = Math.min((Date.now() - start) / duration, 1)
+            setCount(Math.floor(easeOut(progress) * value))
+            if (progress < 1) requestAnimationFrame(tick)
           }
-
-          animate()
+          tick()
         }
       },
-      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.15 }
     )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
+    if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
-  }, [end])
+  }, [value])
 
   return (
     <div ref={ref} className="text-center">
-      <motion.div
-        className="text-4xl font-bold text-[#C9A96E] mb-2"
-        initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-      >
-        {count}
-        {end > 100 ? '' : end === 30 ? '' : '+'}
-      </motion.div>
-      <p className="text-[#94A3B8]" style={{ fontFamily: "'DM Sans'", fontSize: '14px' }}>
-        {label}
-      </p>
+      <div className="text-5xl font-bold mb-2" style={{ fontFamily: "'Exo 2'", color: C.cyan }}>
+        {count}{suffix}
+      </div>
+      <p className="text-base" style={{ fontFamily: "'IBM Plex Sans'", color: C.text2, fontSize: '16px' }}>{label}</p>
     </div>
   )
 }
 
 export function SocialProofSection() {
-  const testimonials = [
-    {
-      initials: 'LS',
-      quote: 'Sprint Machine saved me 20 hours per campaign. The copy is market-ready.',
-      name: 'Laura S.',
-      title: 'Growth Marketing Manager',
-    },
-    {
-      initials: 'MK',
-      quote: 'Finally, a tool that understands strategy AND execution. Best investment this quarter.',
-      name: 'Marcus K.',
-      title: 'Head of Content',
-    },
-    {
-      initials: 'JD',
-      quote: 'Shared our sprint with the entire team. Everyone aligned in minutes, not days.',
-      name: 'Jasmine D.',
-      title: 'Marketing Director',
-    },
-    {
-      initials: 'RV',
-      quote: 'The consistency across channels is incredible. Our audience noticed the difference.',
-      name: 'Raj V.',
-      title: 'Brand Strategist',
-    },
-  ]
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
   return (
     <section className="relative py-32 px-6">
       <div className="max-w-6xl mx-auto">
@@ -109,86 +78,51 @@ export function SocialProofSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <p className="text-xs tracking-widest uppercase text-[#C9A96E] mb-4 font-semibold">Social Proof</p>
-          <h2 className="text-4xl font-bold text-[#F1F5F9] mb-4" style={{ fontFamily: "'Bricolage Grotesque'" }}>
-            Trusted by Marketing Leaders
+          <p className="text-sm tracking-widest uppercase font-bold mb-4" style={{ color: C.cyan, fontFamily: "'Exo 2'" }}>What You Get</p>
+          <h2 className="text-4xl font-bold mb-5" style={{ fontFamily: "'Exo 2'", color: C.text1 }}>
+            A complete sprint, ready to execute
           </h2>
+          <p className="text-lg max-w-2xl mx-auto" style={{ fontFamily: "'IBM Plex Sans'", lineHeight: '1.7', fontSize: '18px', color: C.text2 }}>
+            Not a template. Not a framework. A fully written, channel-specific marketing plan for your business.
+          </p>
         </motion.div>
 
-        {/* Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 py-12 border-y border-[#7C3AED] border-opacity-20">
-          <Counter end={500} label="Sprints Generated" />
-          <Counter end={200} label="Hours Saved" />
-          <Counter end={5} label="Channels Supported" />
-          <Counter end={30} label="Days in Minutes" />
+        <div
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 py-12 border-y"
+          style={{ borderColor: 'rgba(0,200,255,0.15)' }}
+        >
+          {STATS.map((s) => (
+            <Counter key={s.label} {...s} />
+          ))}
         </div>
 
-        {/* Testimonials */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-        >
-          {testimonials.map((testimonial, i) => (
-            <motion.div
-              key={i}
-              className="p-6 rounded-lg border border-[#C9A96E] border-opacity-30 bg-[#16161d] bg-opacity-50"
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 0.6,  },
-                },
-              }}
-              whileHover={{ y: -6, boxShadow: '0 0 40px rgba(201,169,110,0.2)' }}
-            >
-              <div className="flex gap-4 mb-4">
-                <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-[#0a0a0f] shrink-0"
-                  style={{ background: '#C9A96E' }}
-                >
-                  {testimonial.initials}
-                </div>
-                <div>
-                  <p className="text-[#F1F5F9] text-sm font-medium">{testimonial.name}</p>
-                  <p className="text-[#94A3B8] text-xs">{(testimonial as any).title}</p>
-                </div>
-              </div>
-              <p className="text-[#F1F5F9]" style={{ fontFamily: "'DM Sans'", lineHeight: '1.7', fontSize: '14px' }}>
-                {testimonial.quote}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Credentials */}
-        <motion.div
-          className="flex gap-6 justify-center items-center flex-wrap mt-20 pt-12 border-t border-[#7C3AED] border-opacity-20"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.7 }}
         >
-          <span className="text-[#94A3B8] text-sm">Built by Shireen:</span>
-          <Link
-            href="https://www.linkedin.com/in/shireenlow"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#C9A96E] hover:text-[#E8D5B0] transition-colors text-sm"
-          >
-            LinkedIn
-          </Link>
-          <Link
-            href="https://github.com/shireen168"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#C9A96E] hover:text-[#E8D5B0] transition-colors text-sm"
-          >
-            GitHub
-          </Link>
+          {INCLUDES.map((item, i) => (
+            <motion.div
+              key={item}
+              className="flex items-start gap-3 p-5 rounded-xl"
+              style={{ border: `1px solid ${C.border}`, background: C.surface }}
+              initial={{ opacity: 0, x: -12 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07, duration: 0.5 }}
+              whileHover={{ boxShadow: '0 0 40px rgba(0,200,255,0.5)', borderColor: 'rgba(0,200,255,0.5)' }}
+            >
+              <div
+                className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                style={{ background: 'rgba(0,200,255,0.12)', border: '1px solid rgba(0,200,255,0.4)' }}
+              >
+                <Check className="w-3.5 h-3.5" style={{ color: C.cyan }} />
+              </div>
+              <p className="text-base leading-relaxed" style={{ fontFamily: "'IBM Plex Sans'", color: C.text2, fontSize: '17px' }}>{item}</p>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>

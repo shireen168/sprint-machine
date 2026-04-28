@@ -3,64 +3,60 @@
 import { motion } from 'framer-motion'
 import { CtaButton } from './cta-button'
 
+const C = {
+  cyan: '#00C8FF',
+  surface: '#091420',
+  text1: '#EEF6FF',
+  text2: '#7ABFDF',
+}
+
 export function FinalCTASection() {
   return (
     <section className="relative py-32 px-6 overflow-hidden">
-      {/* Animated glow background */}
       <motion.div
         className="absolute inset-0 -z-10"
-        style={{
-          background: 'radial-gradient(circle at center, rgba(124,58,237,0.15) 0%, transparent 70%)',
-        }}
-        animate={{
-          opacity: [0.5, 0.8, 0.5],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        style={{ background: 'radial-gradient(circle at center, rgba(0,200,255,0.08) 0%, transparent 70%)' }}
+        animate={{ opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       <motion.div
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl -z-10"
-        style={{
-          background: 'radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%)',
-        }}
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        style={{ background: 'radial-gradient(circle, rgba(0,200,255,0.12) 0%, transparent 70%)' }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       <div className="max-w-3xl mx-auto relative z-10">
         <motion.div
-          className="rounded-3xl border border-[#C9A96E]/20 bg-[#16161d]/40 backdrop-blur p-12 relative overflow-hidden"
+          className="rounded-3xl p-12 relative overflow-hidden"
+          style={{
+            border: '1px solid rgba(0,200,255,0.25)',
+            background: 'rgba(9,20,32,0.6)',
+            backdropFilter: 'blur(12px)',
+          }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          {/* Top edge radial glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 pointer-events-none" style={{
-            background: 'radial-gradient(ellipse at 50% 0%, rgba(201,169,110,0.4) 0%, transparent 70%)',
-          }} />
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(0,200,255,0.5) 0%, transparent 70%)' }}
+          />
 
           <div className="text-center relative">
-            <p className="text-xs tracking-widest uppercase text-[#C9A96E] mb-4 font-semibold">Ready to launch</p>
+            <p className="text-sm tracking-widest uppercase font-bold mb-4" style={{ color: C.cyan, fontFamily: "'Exo 2'" }}>
+              Ready to launch
+            </p>
 
             <motion.h2
-              className="text-4xl sm:text-5xl font-bold text-[#F1F5F9] mb-8"
+              className="text-4xl sm:text-5xl font-bold mb-8"
+              style={{ fontFamily: "'Exo 2'", color: C.text1 }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              style={{ fontFamily: "'Bricolage Grotesque'" }}
             >
               Start your first sprint today
             </motion.h2>
@@ -77,12 +73,12 @@ export function FinalCTASection() {
             </motion.div>
 
             <motion.p
-              className="text-[#94A3B8] text-sm"
+              className="text-base"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
-              style={{ fontFamily: "'DM Sans'", lineHeight: '1.7' }}
+              style={{ fontFamily: "'IBM Plex Sans'", lineHeight: '1.7', fontSize: '16px', color: C.text2 }}
             >
               No credit card required. Generate a complete marketing sprint in minutes.
             </motion.p>

@@ -22,55 +22,71 @@ interface Step4PlatformsProps {
 export function Step4Platforms({ value, onChange, error }: Step4PlatformsProps) {
   const stepConfig = WIZARD_STEPS[3];
 
-  const togglePlatform = (platform: string) => {
-    if (value.includes(platform)) {
-      onChange(value.filter((p) => p !== platform));
-    } else {
-      onChange([...value, platform]);
-    }
+  const toggle = (platform: string) => {
+    onChange(value.includes(platform) ? value.filter((p) => p !== platform) : [...value, platform]);
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <fieldset>
-        <legend className="text-sm font-medium text-white/80 mb-2 block">
+        <legend
+          className="block font-semibold mb-3"
+          style={{ color: '#7ABFDF', fontFamily: "'Exo 2'", fontSize: '16px' }}
+        >
           Select all platforms you use
         </legend>
-        <div className="grid grid-cols-2 gap-1">
-          {PLATFORM_OPTIONS.map((option) => (
-            <label
-              key={option.value}
-              className="flex items-center gap-3 p-2 rounded-lg border-2 cursor-pointer transition-all"
-              style={{
-                borderColor: value.includes(option.value)
-                  ? stepConfig.color
-                  : 'rgba(255, 255, 255, 0.1)',
-                backgroundColor: value.includes(option.value)
-                  ? 'rgba(255, 255, 255, 0.1)'
-                  : 'rgba(255, 255, 255, 0.05)',
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={value.includes(option.value)}
-                onChange={() => togglePlatform(option.value)}
-                className="w-4 h-4 accent-white"
-              />
-              <span className="text-white text-sm">{option.label}</span>
-            </label>
-          ))}
+        <div className="grid grid-cols-2 gap-2">
+          {PLATFORM_OPTIONS.map((option) => {
+            const isSelected = value.includes(option.value);
+            return (
+              <label
+                key={option.value}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer transition-all"
+                style={{
+                  borderWidth: '1.5px',
+                  borderStyle: 'solid',
+                  borderColor: isSelected ? stepConfig.color : 'rgba(0,200,255,0.15)',
+                  background: isSelected ? `${stepConfig.color}12` : '#091420',
+                  boxShadow: isSelected ? `0 0 12px ${stepConfig.color}20` : 'none',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => toggle(option.value)}
+                  className="w-4 h-4 shrink-0"
+                  style={{ accentColor: stepConfig.color }}
+                />
+                <span
+                  className="text-base"
+                  style={{
+                    fontFamily: "'IBM Plex Sans'",
+                    fontSize: '16px',
+                    color: isSelected ? '#EEF6FF' : '#7ABFDF',
+                  }}
+                >
+                  {option.label}
+                </span>
+              </label>
+            );
+          })}
         </div>
       </fieldset>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 text-red-200 text-sm">
+        <div
+          className="rounded-xl px-4 py-3"
+          style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#FCA5A5', fontFamily: "'IBM Plex Sans'", fontSize: '16px' }}
+        >
           {error}
         </div>
       )}
 
-      <div className="text-white/60 text-sm bg-white/5 border border-white/10 rounded-lg px-4 py-3">
-        <p className="font-medium mb-1">Selected: {value.length}</p>
-        {value.length === 0 && <p className="text-white/40">Pick at least one platform</p>}
+      <div
+        className="rounded-xl px-4 py-3"
+        style={{ background: 'rgba(0,200,255,0.05)', border: '1px solid rgba(0,200,255,0.12)', color: '#7ABFDF', fontFamily: "'IBM Plex Sans'", fontSize: '14px' }}
+      >
+        Selected: {value.length}{value.length === 0 ? ' - pick at least one' : ''}
       </div>
     </div>
   );

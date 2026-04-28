@@ -1,7 +1,6 @@
 'use client';
 
 import type { IntakeValues } from '@/lib/sprint-wizard-config';
-import { Button } from '@/components/ui/button';
 
 interface StepPreviewProps {
   values: IntakeValues;
@@ -9,11 +8,7 @@ interface StepPreviewProps {
 
 const capitalize = (str: string) => {
   if (!str) return '';
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+  return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 };
 
 export function StepPreview({ values }: StepPreviewProps) {
@@ -24,53 +19,74 @@ export function StepPreview({ values }: StepPreviewProps) {
 
   const formatTried = (tried: string) => {
     if (!tried) return '(None)';
-    const items = tried.split(',').map(item => item.trim()).filter(Boolean);
-    return items.map(item => capitalize(item)).join(', ');
+    return tried.split(',').map(i => i.trim()).filter(Boolean).map(capitalize).join(', ');
   };
 
   const formatBudget = (budget: string) => {
     if (!budget) return '(Not specified)';
-    const normalized = budget.toLowerCase();
-    if (normalized.includes('$') || normalized.includes('rm')) return budget;
+    const n = budget.toLowerCase();
+    if (n.includes('$') || n.includes('rm')) return budget;
     return capitalize(budget);
   };
 
   const sections = [
-    { label: 'Product / Service', value: capitalize(values.product), step: 0 },
-    { label: 'Target Customer', value: capitalize(values.customer), step: 1 },
-    { label: 'Primary Goal', value: capitalize(values.goal), step: 2 },
-    { label: 'Platforms', value: formatPlatforms(values.platforms || []), step: 3 },
-    { label: 'Monthly Budget', value: formatBudget(values.budget), step: 4 },
-    { label: 'What You\'ve Tried', value: formatTried(values.tried), step: 5 },
-    { label: 'Differentiator', value: capitalize(values.differentiator), step: 6 },
-    { label: 'Additional Context', value: values.extra ? capitalize(values.extra) : '(None)', step: 7 },
+    { label: 'Product / Service', value: capitalize(values.product) },
+    { label: 'Target Customer', value: capitalize(values.customer) },
+    { label: 'Primary Goal', value: capitalize(values.goal) },
+    { label: 'Platforms', value: formatPlatforms(values.platforms || []) },
+    { label: 'Monthly Budget', value: formatBudget(values.budget) },
+    { label: "What You've Tried", value: formatTried(values.tried) },
+    { label: 'Differentiator', value: capitalize(values.differentiator) },
+    { label: 'Additional Context', value: values.extra ? capitalize(values.extra) : '(None)' },
   ];
 
   return (
     <div className="space-y-4">
-      <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-text-2 text-sm">
-        <p>Review your answers before we generate your 30-day sprint. Click any section to edit.</p>
+      <div
+        className="rounded-xl px-4 py-3 text-base"
+        style={{
+          background: 'rgba(0,200,255,0.05)',
+          border: '1px solid rgba(0,200,255,0.15)',
+          color: '#7ABFDF',
+          fontFamily: "'IBM Plex Sans'",
+        }}
+      >
+        Review your answers before we generate your 30-day sprint.
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {sections.map((section) => (
           <div
             key={section.label}
-            className="bg-white/3 border border-white/10 rounded-lg px-4 py-3"
+            className="rounded-xl px-4 py-3.5"
+            style={{ background: '#091420', border: '1px solid rgba(0,200,255,0.12)' }}
           >
-            <div className="text-xs font-semibold text-text-2 uppercase tracking-wide mb-2">
+            <div
+              className="text-xs font-bold uppercase tracking-widest mb-1.5"
+              style={{ color: '#00C8FF', fontFamily: "'Exo 2'" }}
+            >
               {section.label}
             </div>
-            <div className="text-text-1 line-clamp-2 text-sm">
+            <div
+              className="text-base line-clamp-2"
+              style={{ color: '#EEF6FF', fontFamily: "'IBM Plex Sans'" }}
+            >
               {section.value}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="rounded-lg px-4 py-3 space-y-2" style={{ background: 'rgba(201,169,110,0.08)', border: '1px solid rgba(201,169,110,0.2)' }}>
-        <p className="font-medium" style={{ color: '#C9A84C' }}>Ready to generate?</p>
-        <p className="text-text-2 text-xs">We'll create a complete 30-day marketing sprint with platform-specific content, calendar, and success metrics.</p>
+      <div
+        className="rounded-xl px-4 py-4"
+        style={{ background: 'rgba(0,200,255,0.08)', border: '1px solid rgba(0,200,255,0.3)' }}
+      >
+        <p className="font-bold text-base mb-1" style={{ color: '#00C8FF', fontFamily: "'Exo 2'" }}>
+          Ready to generate?
+        </p>
+        <p className="text-base" style={{ color: '#7ABFDF', fontFamily: "'IBM Plex Sans'" }}>
+          We'll create a complete 30-day marketing sprint with platform-specific content, calendar, and success metrics.
+        </p>
       </div>
     </div>
   );
