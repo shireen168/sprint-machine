@@ -3,6 +3,15 @@ import { auth } from '@clerk/nextjs/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { DeleteSprintButton } from '@/components/dashboard/delete-sprint-button';
 
+const formatSprintTitle = (title: string) => {
+  const productName = title.split(' - ')[0];
+  return productName
+    .replace(/[-_]/g, ' ')
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default async function DashboardPage() {
   const { userId } = await auth();
 
@@ -84,7 +93,7 @@ export default async function DashboardPage() {
                         href={`/sprint/${sprint.id}`}
                         className="font-medium text-text-1 hover:text-gold transition-colors truncate block"
                       >
-                        {sprint.title}
+                        {formatSprintTitle(sprint.title)}
                       </Link>
                     </td>
                     <td className="px-6 py-4">

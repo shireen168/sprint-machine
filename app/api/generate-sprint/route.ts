@@ -2,56 +2,65 @@ import { auth } from '@clerk/nextjs/server';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { createServiceClient } from '@/lib/supabase/server';
 import { SYSTEM_PROMPT, USER_PROMPT_TEMPLATE } from '@/lib/sprint-prompt';
+import { validateIntake } from '@/lib/input-validation';
+import { logger } from '@/lib/logger';
 import type { IntakeValues } from '@/lib/sprint-wizard-config';
 import { NextRequest, NextResponse } from 'next/server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
-console.log('[generate-sprint] Init: ANTHROPIC_API_KEY present:', !!process.env.ANTHROPIC_API_KEY);
+logger.debug('Initializing generate-sprint endpoint');
+
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL || '',
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
+});
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(2, '1 d'),
+  analytics: true,
+});
+
 export async function POST(request: NextRequest) {
   try {
-    // Auth check
     const { userId, sessionClaims } = await auth();
-    console.log('[generate-sprint] Auth result:', { userId, email: sessionClaims?.email });
     if (!userId) {
-      console.error('[generate-sprint] No userId');
+      logger.warn('Unauthorized request to generate-sprint');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { success, remaining, reset } = await ratelimit.limit(`user:${userId}`);
+    if (!success) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: `Rate limit exceeded. ${remaining} generations remaining today.` },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)) } }
       );
     }
 
-    // Parse intake
-    const intake = (await request.json()) as IntakeValues;
-    if (!intake.product || !intake.customer) {
-      console.error('[generate-sprint] Missing fields:', { product: !!intake.product, customer: !!intake.customer });
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    logger.debug('Sprint generation requested by user');
+    const rawIntake = (await request.json()) as any;
+    const intake = validateIntake(rawIntake);
+
+    if (!intake) {
+      return NextResponse.json({ error: 'Invalid input parameters' }, { status: 400 });
     }
 
-    console.log('[generate-sprint] Creating Supabase client...');
     const supabase = createServiceClient() as any;
-    console.log('[generate-sprint] Supabase client ready');
-
-    // Ensure user exists with email
     const userEmail = (sessionClaims?.email as string) || 'unknown@example.com';
-    console.log('[generate-sprint] Upserting user:', { userId, userEmail });
+
     const { error: userUpsertError } = await supabase
       .from('users')
       .upsert({ id: userId, email: userEmail }, { onConflict: 'id' });
 
     if (userUpsertError) {
-      console.error('[generate-sprint] User upsert error:', userUpsertError);
-    } else {
-      console.log('[generate-sprint] User upsert successful');
+      logger.warn('User upsert failed');
     }
 
-    // Insert sprint row (status: generating)
-    console.log('[generate-sprint] Inserting sprint...');
     const { data: sprint, error: insertError } = await supabase
       .from('sprints')
       .insert({
@@ -65,27 +74,12 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
 
-    if (insertError) {
-      console.error('[generate-sprint] Insert error:', insertError);
-      return NextResponse.json(
-        { error: 'Failed to create sprint' },
-        { status: 500 }
-      );
-    }
-    if (!sprint) {
-      console.error('[generate-sprint] No sprint returned');
-      return NextResponse.json(
-        { error: 'Failed to create sprint' },
-        { status: 500 }
-      );
+    if (insertError || !sprint) {
+      logger.error('Sprint creation failed');
+      return NextResponse.json({ error: 'Failed to create sprint' }, { status: 500 });
     }
 
-    console.log('[generate-sprint] Sprint created:', sprint.id);
-
-    // Call Anthropic API
     try {
-      console.log('[generate-sprint] Calling Anthropic API...');
-      console.log('[generate-sprint] API Key available:', !!client.apiKey || 'using env var');
       const response = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 4000,
@@ -104,9 +98,6 @@ export async function POST(request: NextRequest) {
         ],
       });
 
-      console.log('[generate-sprint] API response received');
-
-      // Extract and parse response
       const content = response.content[0];
       if (content.type !== 'text') {
         throw new Error('Unexpected response type');
@@ -114,63 +105,36 @@ export async function POST(request: NextRequest) {
 
       let output;
       try {
-        // Extract JSON from response (handle markdown code blocks)
         const jsonMatch = content.text.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
           throw new Error('No JSON found in response');
         }
-        const jsonStr = jsonMatch[0];
-        console.log('[generate-sprint] Attempting to parse JSON...');
-        console.log('[generate-sprint] JSON length:', jsonStr.length);
-        console.log('[generate-sprint] First 500 chars:', jsonStr.substring(0, 500));
-        console.log('[generate-sprint] copy_prompts check:', jsonStr.includes('"copy_prompts"'));
-        output = JSON.parse(jsonStr);
-        console.log('[generate-sprint] JSON parsed successfully');
+        output = JSON.parse(jsonMatch[0]);
       } catch (parseError) {
-        console.error('[generate-sprint] Parse error:', parseError);
-        console.error('[generate-sprint] Error position:', (parseError as any).message);
         throw new Error('Failed to parse AI response');
       }
 
-      // Update sprint row (status: complete)
-      console.log('[generate-sprint] Updating sprint status to complete...');
       const { error: updateError } = await supabase
         .from('sprints')
-        .update({
-          status: 'complete',
-          output,
-        })
+        .update({ status: 'complete', output })
         .eq('id', sprint.id);
 
       if (updateError) {
-        console.error('[generate-sprint] Update error:', updateError);
         throw new Error('Failed to save sprint output');
       }
 
-      console.log('[generate-sprint] Sprint completed successfully');
-      return NextResponse.json({
-        sprintId: sprint.id,
-      });
+      return NextResponse.json({ sprintId: sprint.id });
     } catch (aiError) {
-      console.error('[generate-sprint] AI generation error:', aiError);
-      // Update sprint status to failed
+      logger.error('Generation failed:', aiError instanceof Error ? aiError.message : String(aiError));
       await supabase
         .from('sprints')
         .update({ status: 'failed' })
         .eq('id', sprint.id);
 
-      return NextResponse.json(
-        { error: 'Generation failed' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
     }
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    console.error('[generate-sprint] Request error:', errorMsg);
-    console.error('[generate-sprint] Stack:', error instanceof Error ? error.stack : '');
-    return NextResponse.json(
-      { error: 'Internal server error', details: errorMsg },
-      { status: 500 }
-    );
+    logger.error('Request error:', error instanceof Error ? error.message : String(error));
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

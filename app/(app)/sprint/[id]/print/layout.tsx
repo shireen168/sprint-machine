@@ -2,10 +2,10 @@ import type { ReactNode } from 'react';
 
 export default function PrintLayout({ children }: { children: ReactNode }) {
   return (
-    <div style={{ background: 'white', margin: 0, padding: 0 }}>
+    <div style={{ background: '#050A0E', margin: 0, padding: 0 }}>
       <style>{`
         body {
-          background: white !important;
+          background: #050A0E !important;
           margin: 0 !important;
           padding: 0 !important;
         }
@@ -16,6 +16,11 @@ export default function PrintLayout({ children }: { children: ReactNode }) {
           max-width: 100% !important;
           margin: 0 !important;
           padding: 0 !important;
+        }
+        @media print {
+          body {
+            background: white !important;
+          }
         }
       `}</style>
       {children}

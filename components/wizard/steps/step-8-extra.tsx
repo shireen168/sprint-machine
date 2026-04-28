@@ -67,7 +67,7 @@ export function Step8Extra({ value, onChange, error }: Step8ExtraProps) {
         className="rounded-xl px-4 py-3"
         style={{ background: 'rgba(0,200,255,0.05)', border: '1px solid rgba(0,200,255,0.12)', color: '#7ABFDF', fontFamily: "'IBM Plex Sans'", fontSize: '14px' }}
       >
-        Click "Generate Sprint" to create your 30-day plan.
+        Click "Next" to create your 30-day plan.
       </div>
     </div>
   );

@@ -39,6 +39,14 @@ const mockOutput = {
 }
 
 export async function POST(request: Request) {
+  // Gate dev-only endpoint
+  if (process.env.NODE_ENV !== 'development') {
+    return Response.json(
+      { error: 'This endpoint is only available in development' },
+      { status: 404 }
+    );
+  }
+
   const { userId, sessionClaims } = await auth()
 
   if (!userId) {

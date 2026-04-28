@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Settings', href: '/settings' },
 ]
 
 export function AppNav() {

@@ -1,13 +1,49 @@
 import { Anthropic } from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { SYSTEM_PROMPT, USER_PROMPT_TEMPLATE } from '@/lib/sprint-prompt';
+import { validateIntake } from '@/lib/input-validation';
+import { logger } from '@/lib/logger';
 import type { IntakeValues } from '@/lib/sprint-wizard-config';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL || '',
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
+});
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(1, '1 h'),
+  analytics: true,
+});
+
 export async function POST(request: NextRequest) {
   try {
-    const intake = (await request.json()) as IntakeValues;
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const { success, remaining, reset } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. 1 request per hour.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
+
+    logger.debug('Guest sprint generation from:', ip);
+    const rawIntake = (await request.json()) as any;
+    const intake = validateIntake(rawIntake);
+
+    if (!intake) {
+      return NextResponse.json({ error: 'Invalid input parameters' }, { status: 400 });
+    }
 
     const response = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -25,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ output });
   } catch (error) {
-    console.error('[generate-sprint-guest] Error:', error);
+    logger.error('Guest generation error:', error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
   }
 }

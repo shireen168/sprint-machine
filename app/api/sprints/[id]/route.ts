@@ -1,8 +1,23 @@
 import { auth } from '@clerk/nextjs/server';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { createServiceClient } from '@/lib/supabase/server';
+import { validateIntake } from '@/lib/input-validation';
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import type { IntakeValues } from '@/lib/sprint-wizard-config';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL || '',
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
+});
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(2, '1 d'),
+  analytics: true,
+});
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -59,13 +74,13 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const { error } = await supabase.from('sprints').delete().eq('id', id).eq('user_id', userId);
 
     if (error) {
-      console.error('[delete-sprint] Error:', error);
+      logger.error('Delete failed');
       return NextResponse.json({ error: 'Failed to delete sprint' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('[delete-sprint] Error:', error);
+    logger.error('Delete error:', error instanceof Error ? error.message : String(error));
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -94,7 +109,19 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     // Handle full regeneration (from edit wizard)
-    const intake = body as IntakeValues;
+    const { success, remaining, reset } = await ratelimit.limit(`user:${userId}`);
+    if (!success) {
+      return NextResponse.json(
+        { error: `Rate limit exceeded. ${remaining} regenerations remaining today.` },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)) } }
+      );
+    }
+
+    const rawIntake = body as any;
+    const intake = validateIntake(rawIntake);
+    if (!intake) {
+      return NextResponse.json({ error: 'Invalid input parameters' }, { status: 400 });
+    }
 
     await supabase.from('sprints').update({ status: 'generating', intake, output: null }).eq('id', id).eq('user_id', userId);
 
@@ -118,7 +145,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     return NextResponse.json({ sprintId: id });
   } catch (error) {
-    console.error('[patch-sprint] Error:', error);
+    logger.error('Patch operation failed:', error instanceof Error ? error.message : String(error));
     const { id } = await params;
     const supabase = createServiceClient() as any;
     await supabase.from('sprints').update({ status: 'failed' }).eq('id', id);

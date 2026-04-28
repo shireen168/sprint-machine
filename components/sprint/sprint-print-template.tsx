@@ -57,11 +57,27 @@ export function SprintPrintTemplate({ sprint }: SprintPrintTemplateProps) {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const capitalizeProduct = (product: string) => {
-    return product
+  const capitalizeTitle = (title: string) => {
+    return title
+      .split(' - ')[0]
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
+  };
+
+  const parseItemWithBullets = (item: string) => {
+    const colonIndex = item.indexOf(':');
+    if (colonIndex === -1) return { title: null, points: [item] };
+
+    const title = item.substring(0, colonIndex).trim();
+    const content = item.substring(colonIndex + 1).trim();
+
+    const points = content
+      .split(/\n|[\-•](?=\s)/)
+      .map(p => p.trim())
+      .filter(p => p.length > 0);
+
+    return { title, points };
   };
 
   return (
@@ -69,15 +85,9 @@ export function SprintPrintTemplate({ sprint }: SprintPrintTemplateProps) {
       <style>{printStyles}</style>
 
       <div className="print-header">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1>30-Day Sprint for {capitalizeProduct(intake.product || 'Your Product')}</h1>
-            <p>Marketing Strategy & Execution Plan</p>
-          </div>
-          <div style={{ textAlign: 'right', fontSize: '11px', color: '#999' }}>
-            <p style={{ margin: '0 0 4px 0' }}>Generated on</p>
-            <p style={{ margin: 0, fontWeight: 500 }}>{formatDate()}</p>
-          </div>
+        <div>
+          <h1>30-Day Sprint for {capitalizeTitle(intake.product || 'Your Product')}</h1>
+          <p>Marketing Strategy & Execution Plan</p>
         </div>
       </div>
 
@@ -98,93 +108,139 @@ export function SprintPrintTemplate({ sprint }: SprintPrintTemplateProps) {
       <div className="print-section">
         <h2>3. Channel Strategy</h2>
         <p className="section-intro">Which platforms to prioritize and why</p>
-        <ul className="print-list">
-          {channelItems.map((item: string, idx: number) => (
-            <li key={idx}>{item}</li>
-          ))}
-        </ul>
+        <div className="print-cards">
+          {channelItems.map((item: string, idx: number) => {
+            const { title, points } = parseItemWithBullets(item);
+            return (
+              <div key={idx} className="print-card">
+                {title && <div style={{ fontWeight: 700, color: '#00C8FF', marginBottom: '8px', fontSize: '14px' }}>{title}</div>}
+                <ul style={{ margin: 0, paddingLeft: '20px', listStyle: 'none' }}>
+                  {points.map((point: string, pIdx: number) => (
+                    <li key={pIdx} style={{ marginBottom: '6px', color: '#EEF6FF', fontSize: '13px', position: 'relative', paddingLeft: '16px' }}>
+                      <span style={{ position: 'absolute', left: 0, color: '#00C8FF', marginRight: '4px' }}>→ </span>
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="print-section">
         <h2>4. Content Calendar</h2>
         <p className="section-intro">Daily content plan for 4 weeks</p>
-        <div className="print-calendar">
-          {Object.entries(contentCalendar).map(([week, days]: [string, any]) => (
-            <div key={week} className="print-week">
-              <h4>
-                {WEEK_LABELS[week] || week.toUpperCase()} ({WEEK_DAYS[week] || ''})
-              </h4>
-              {Array.isArray(days) &&
-                days.map((day: any, idx: number) => (
-                  <div key={idx} className="print-day">
-                    <div className="print-day-header">{day.day}</div>
-                    <div className="print-day-item">
-                      <strong>Topic:</strong> {day.topic}
-                    </div>
-                    <div className="print-day-item">
-                      <strong>Platforms:</strong> {Array.isArray(day.platforms) ? day.platforms.join(', ') : day.platforms}
-                    </div>
-                    <div className="print-day-item">
-                      <strong>Format:</strong> {day.format}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          ))}
-        </div>
+        <table className="print-table print-table-header">
+          <thead>
+            <tr>
+              <th className="print-table-th" style={{ width: '12%' }}>Day</th>
+              <th className="print-table-th" style={{ width: '32%' }}>Topic</th>
+              <th className="print-table-th" style={{ width: '32%' }}>Platforms</th>
+              <th className="print-table-th" style={{ width: '24%' }}>Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(contentCalendar).map(([week, days]: [string, any]) => [
+              <tr key={`${week}-header`} className="print-table-section-header">
+                <td colSpan={4} className="print-table-section-title">
+                  {WEEK_LABELS[week] || week.toUpperCase()} ({WEEK_DAYS[week] || ''})
+                </td>
+              </tr>,
+              ...((Array.isArray(days) ? days : []).map((day: any, idx: number) => (
+                <tr key={`${week}-${idx}`} className="print-table-row">
+                  <td className="print-table-cell">{day.day}</td>
+                  <td className="print-table-cell">{day.topic}</td>
+                  <td className="print-table-cell">{Array.isArray(day.platforms) ? day.platforms.join(', ') : day.platforms}</td>
+                  <td className="print-table-cell">{day.format}</td>
+                </tr>
+              )))
+            ]).flat()}
+          </tbody>
+        </table>
       </div>
 
       <div className="print-section">
         <h2>5. Copy Generation Prompts</h2>
         <p className="section-intro">Strategic frameworks to generate fresh content daily</p>
 
-        {Object.entries(promptsByWeek).map(([weekKey, prompts]: [string, any]) => (
-          <div key={weekKey}>
-            <h3>
-              {WEEK_LABELS[weekKey] || weekKey} ({WEEK_DAYS[weekKey] || ''})
-            </h3>
-            <div className="print-week">
-              {prompts.map((item: any, idx: number) => (
-                <div key={idx} className="print-prompt-item">
-                  <div className="print-prompt-header">
-                    {item.day} - {item.platform} ({item.format})
-                  </div>
-
-                  <div className="print-prompt-details">
-                    <div className="print-prompt-detail-item">
-                      <strong>Angle:</strong> {item.angle}
-                    </div>
-                    <div className="print-prompt-detail-item">
-                      <strong>Hook:</strong> {item.hook}
-                    </div>
-                    <div className="print-prompt-detail-item">
-                      <strong>Key Message:</strong> {item.key_message}
-                    </div>
-                    <div className="print-prompt-detail-item">
-                      <strong>CTA:</strong> {item.cta}
-                    </div>
-                  </div>
-
-                  <div className="print-prompt-text">{item.prompt}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+        <table className="print-table print-table-header">
+          <thead>
+            <tr>
+              <th className="print-table-th" style={{ width: '8%' }}>Day</th>
+              <th className="print-table-th" style={{ width: '12%' }}>Platform</th>
+              <th className="print-table-th" style={{ width: '10%' }}>Format</th>
+              <th className="print-table-th" style={{ width: '70%' }}>Angle / Hook / Message / CTA</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(promptsByWeek).map(([weekKey, prompts]: [string, any]) => [
+              <tr key={`${weekKey}-header`} className="print-table-section-header">
+                <td colSpan={4} className="print-table-section-title">
+                  {WEEK_LABELS[weekKey] || weekKey} ({WEEK_DAYS[weekKey] || ''})
+                </td>
+              </tr>,
+              ...((Array.isArray(prompts) ? prompts : []).map((item: any, idx: number) => (
+                <tr key={`${weekKey}-${idx}`} className="print-table-row">
+                  <td className="print-table-cell">{item.day}</td>
+                  <td className="print-table-cell">{item.platform}</td>
+                  <td className="print-table-cell">{item.format}</td>
+                  <td className="print-table-cell">
+                    <div style={{ marginBottom: '6px' }}><strong style={{ color: '#00C8FF' }}>Angle:</strong> {item.angle}</div>
+                    <div style={{ marginBottom: '6px' }}><strong style={{ color: '#00C8FF' }}>Hook:</strong> {item.hook}</div>
+                    <div style={{ marginBottom: '6px' }}><strong style={{ color: '#00C8FF' }}>Message:</strong> {item.key_message}</div>
+                    <div><strong style={{ color: '#00C8FF' }}>CTA:</strong> {item.cta}</div>
+                  </td>
+                </tr>
+              )))
+            ]).flat()}
+          </tbody>
+        </table>
       </div>
 
       <div className="print-section">
         <h2>6. Success Metrics</h2>
         <p className="section-intro">Specific, measurable goals for the 30-day period</p>
-        <ul className="print-list">
-          {successItems.map((item: string, idx: number) => (
-            <li key={idx}>{item}</li>
-          ))}
-        </ul>
+        <div className="print-cards">
+          {successItems.map((item: string, idx: number) => {
+            const { title, points } = parseItemWithBullets(item);
+            return (
+              <div key={idx} className="print-card">
+                {title && (
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
+                    <span style={{ color: '#00C8FF', fontWeight: 700, flexShrink: 0, marginTop: '1px' }}>✓</span>
+                    <div style={{ fontWeight: 700, color: '#00C8FF', fontSize: '14px' }}>{title}</div>
+                  </div>
+                )}
+                <ul style={{ margin: 0, paddingLeft: '20px', listStyle: 'none' }}>
+                  {points.map((point: string, pIdx: number) => (
+                    <li key={pIdx} style={{ marginBottom: '6px', color: '#EEF6FF', fontSize: '13px', position: 'relative', paddingLeft: '16px' }}>
+                      <span style={{ position: 'absolute', left: 0, color: '#00C8FF', marginRight: '4px' }}>→ </span>
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #E8D5B0' }}>
-        <p className="print-metadata">Generated on {new Date().toLocaleDateString()}</p>
+      <div className="print-actions">
+        <button
+          className="print-action-btn"
+          onClick={() => window.print()}
+          title="Save as PDF"
+        >
+          Save
+        </button>
+        <button
+          className="print-action-btn primary"
+          onClick={() => window.close()}
+          title="Close this window"
+        >
+          Exit
+        </button>
       </div>
     </div>
   );

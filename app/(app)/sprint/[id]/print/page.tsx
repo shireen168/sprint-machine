@@ -32,8 +32,6 @@ export default async function SprintPrintPage({ params }: PageProps) {
   const sprint = data as DbSprint;
 
   return (
-    <div style={{ background: 'white', padding: 0, margin: 0 }}>
-      <SprintPrintTemplate sprint={sprint} />
-    </div>
+    <SprintPrintTemplate sprint={sprint} />
   );
 }
