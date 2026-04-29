@@ -362,32 +362,35 @@ export const printStyles = `
 
   @media print {
     .sprint-print-template { background: #fff !important; color: #000 !important; width: 100% !important; min-height: auto !important; padding: 20px 30px !important; orphans: 3; widows: 3; }
-    span[style*="00C8FF"], div[style*="00C8FF"], strong[style*="00C8FF"] { color: #000 !important; }
+    * { color: inherit !important; }
+    body, .sprint-print-template { color: #000 !important; }
+    span, div, strong, p, li, td, th { color: #000 !important; }
+    [style*="00C8FF"], [style*="7ABFDF"], [style*="#00C8FF"] { color: #000 !important; }
     .print-header { border-top: none !important; margin-bottom: 24px !important; }
     .print-header h1 { color: #000 !important; font-size: 28px !important; }
-    .print-header p { color: #333 !important; border: none !important; font-size: 13px !important; }
+    .print-header p { color: #000 !important; border: none !important; font-size: 13px !important; }
     .print-section { background: transparent !important; border-top: 1px solid #ddd !important; padding: 16px 0 !important; }
     .print-section:first-of-type { border-top: none !important; }
     .print-section h2 { color: #000 !important; font-size: 16px !important; }
-    .print-section h3 { color: #1a1a1a !important; }
-    .print-section p { color: #333 !important; font-size: 13px !important; }
+    .print-section h3 { color: #000 !important; }
+    .print-section p { color: #000 !important; font-size: 13px !important; }
     .print-content-box { background: #f5f5f5 !important; border-left: 4px solid #000 !important; }
     .print-content-box p { color: #000 !important; font-size: 13px !important; }
     .print-list li { color: #000 !important; }
     .print-list li::before { color: #000 !important; }
     .print-week { background: transparent !important; }
     .print-week h4 { color: #000 !important; border: none !important; font-size: 12px !important; }
-    .print-day { background: transparent !important; color: #333 !important; border-left: 2px solid #ccc !important; font-size: 12px !important; }
+    .print-day { background: transparent !important; color: #000 !important; border-left: 2px solid #ccc !important; font-size: 12px !important; }
     .print-day-header { color: #000 !important; font-size: 13px !important; }
-    .print-day-item { color: #333 !important; font-size: 12px !important; }
+    .print-day-item { color: #000 !important; font-size: 12px !important; }
     .print-day-item strong { color: #000 !important; }
-    .print-prompt-item { background: #f5f5f5 !important; color: #333 !important; border-left: 4px solid #333 !important; font-size: 12px !important; }
+    .print-prompt-item { background: #f5f5f5 !important; color: #000 !important; border-left: 4px solid #333 !important; font-size: 12px !important; }
     .print-prompt-header { color: #000 !important; font-size: 13px !important; }
-    .print-prompt-text { color: #333 !important; font-size: 12px !important; }
+    .print-prompt-text { color: #000 !important; font-size: 12px !important; }
     .print-prompt-details { border-color: #ccc !important; }
     .print-prompt-detail-item { color: #000 !important; font-size: 12px !important; }
-    .print-metadata { color: #666 !important; font-size: 11px !important; }
-    .section-intro { color: #333 !important; font-size: 13px !important; font-style: italic !important; }
+    .print-metadata { color: #000 !important; font-size: 11px !important; }
+    .section-intro { color: #000 !important; font-size: 13px !important; font-style: italic !important; }
     button, .no-print, .print-actions { display: none !important; }
     .print-table { margin: 12px 0 !important; font-size: 12px !important; }
     .print-table-header thead { background: #e6e6e6 !important; border-bottom: 2px solid #000 !important; }
