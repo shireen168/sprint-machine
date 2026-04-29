@@ -203,17 +203,38 @@ export function SprintWizardLayout({ editMode = false, initialValues, sprintId, 
       </WizardLayout>
 
       {genError && (
-        <div className="fixed bottom-6 left-6 right-6 max-w-md bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 text-red-200 text-sm">
-          <p className="font-medium mb-2">{genError}</p>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setGenError('')}
-            className="text-xs"
-          >
-            Try again
-          </Button>
-        </div>
+        <>
+          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setGenError('')} />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-surface-2 border border-gold/30 rounded-lg p-8 max-w-md w-full z-50 shadow-xl">
+            <h2 className="text-xl font-bold text-text-1 mb-4">
+              {genError.includes('Rate limit') ? 'Daily Limit Reached' : 'Error'}
+            </h2>
+            <p className="text-text-2 mb-6 text-sm leading-relaxed">
+              {genError}
+            </p>
+            <div className="flex gap-3">
+              {genError.includes('Rate limit') && (
+                <a
+                  href="https://github.com/shireen168/sprint-machine"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1"
+                >
+                  <Button className="w-full bg-gold hover:bg-gold-light text-surface-2 font-semibold">
+                    Clone Repository
+                  </Button>
+                </a>
+              )}
+              <Button
+                onClick={() => setGenError('')}
+                variant="outline"
+                className="flex-1"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </>
       )}
 
       <GenerationLoading isVisible={isGenerating} />
