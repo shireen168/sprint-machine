@@ -73,10 +73,12 @@ export default async function SprintPage({ params }: PageProps) {
     )
   }
 
+  const displayTitle = sprint.title.split(' - ')[0];
+
   return (
     <SprintDocLayout sprintId={id}>
       <div className="mb-8 pb-6 border-b border-border">
-        <h1 className="text-4xl font-bold text-text-1 mb-2">{sprint.title}</h1>
+        <h1 className="text-4xl font-bold text-text-1 mb-2">{displayTitle}</h1>
         <p className="text-text-2 text-sm">30-Day Marketing Sprint Plan</p>
       </div>
       <OfferSection value={output.offer || ''} />

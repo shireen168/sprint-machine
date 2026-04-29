@@ -352,42 +352,42 @@ export const printStyles = `
   }
 
   @media print {
-    .sprint-print-template { background: #fff !important; color: #000 !important; width: 100% !important; min-height: auto !important; }
-    .print-header { border-top: none !important; }
-    .print-header h1 { color: #000 !important; }
-    .print-header p { color: #555 !important; border: none !important; }
-    .print-section { background: transparent !important; border-top: 1px solid #ccc !important; padding: 16px 0 !important; }
+    .sprint-print-template { background: #fff !important; color: #000 !important; width: 100% !important; min-height: auto !important; padding: 20px 30px !important; }
+    .print-header { border-top: none !important; margin-bottom: 24px !important; }
+    .print-header h1 { color: #000 !important; font-size: 28px !important; }
+    .print-header p { color: #333 !important; border: none !important; font-size: 13px !important; }
+    .print-section { background: transparent !important; border-top: 1px solid #ddd !important; padding: 16px 0 !important; }
     .print-section:first-of-type { border-top: none !important; }
-    .print-section h2 { color: #000 !important; }
-    .print-section h3 { color: #333 !important; }
-    .print-section p { color: #555 !important; }
-    .print-content-box { background: #f9f9f9 !important; border-left: 3px solid #999 !important; }
-    .print-content-box p { color: #000 !important; }
+    .print-section h2 { color: #000 !important; font-size: 16px !important; }
+    .print-section h3 { color: #1a1a1a !important; }
+    .print-section p { color: #333 !important; font-size: 13px !important; }
+    .print-content-box { background: #f5f5f5 !important; border-left: 4px solid #000 !important; }
+    .print-content-box p { color: #000 !important; font-size: 13px !important; }
     .print-list li { color: #000 !important; }
-    .print-list li::before { color: #666 !important; }
+    .print-list li::before { color: #000 !important; }
     .print-week { background: transparent !important; }
-    .print-week h4 { color: #000 !important; border: none !important; }
-    .print-day { background: transparent !important; color: #555 !important; border-left: 1px solid #ccc !important; }
-    .print-day-header { color: #000 !important; }
-    .print-day-item { color: #555 !important; }
+    .print-week h4 { color: #000 !important; border: none !important; font-size: 12px !important; }
+    .print-day { background: transparent !important; color: #333 !important; border-left: 2px solid #ccc !important; font-size: 12px !important; }
+    .print-day-header { color: #000 !important; font-size: 13px !important; }
+    .print-day-item { color: #333 !important; font-size: 12px !important; }
     .print-day-item strong { color: #000 !important; }
-    .print-prompt-item { background: #f9f9f9 !important; color: #555 !important; border-left: 3px solid #999 !important; }
-    .print-prompt-header { color: #000 !important; }
-    .print-prompt-text { color: #555 !important; }
-    .print-prompt-details { border-color: #ddd !important; }
-    .print-prompt-detail-item { color: #000 !important; }
-    .print-metadata { color: #555 !important; }
-    .section-intro { color: #777 !important; }
+    .print-prompt-item { background: #f5f5f5 !important; color: #333 !important; border-left: 4px solid #333 !important; font-size: 12px !important; }
+    .print-prompt-header { color: #000 !important; font-size: 13px !important; }
+    .print-prompt-text { color: #333 !important; font-size: 12px !important; }
+    .print-prompt-details { border-color: #ccc !important; }
+    .print-prompt-detail-item { color: #000 !important; font-size: 12px !important; }
+    .print-metadata { color: #666 !important; font-size: 11px !important; }
+    .section-intro { color: #333 !important; font-size: 13px !important; font-style: italic !important; }
     button, .no-print, .print-actions { display: none !important; }
-    .print-table { margin: 12px 0 !important; font-size: 13px !important; }
-    .print-table-header thead { background: #e8e8e8 !important; }
-    .print-table-th { color: #000 !important; font-size: 12px !important; font-weight: bold !important; }
-    .print-table-cell { color: #333 !important; border-bottom: 1px solid #ddd !important; font-size: 13px !important; padding: 8px 10px !important; }
+    .print-table { margin: 12px 0 !important; font-size: 12px !important; }
+    .print-table-header thead { background: #e6e6e6 !important; border-bottom: 2px solid #000 !important; }
+    .print-table-th { color: #000 !important; font-size: 11px !important; font-weight: bold !important; padding: 8px 10px !important; }
+    .print-table-cell { color: #000 !important; border-bottom: 1px solid #ddd !important; font-size: 12px !important; padding: 7px 8px !important; }
     .print-table-row:hover { background: transparent !important; }
-    .print-table-section-header { background: #f0f0f0 !important; }
-    .print-table-section-title { color: #000 !important; font-size: 13px !important; font-weight: bold !important; }
+    .print-table-section-header { background: #f0f0f0 !important; border-top: 1px solid #ccc !important; border-bottom: 1px solid #ccc !important; }
+    .print-table-section-title { color: #000 !important; font-size: 12px !important; font-weight: bold !important; padding: 8px 10px !important; }
     .print-cards { margin: 12px 0 !important; gap: 8px !important; }
-    .print-card { background: #f9f9f9 !important; border: 1px solid #ddd !important; border-left: 3px solid #999 !important; color: #000 !important; font-size: 13px !important; }
+    .print-card { background: #f5f5f5 !important; border: 1px solid #ccc !important; border-left: 4px solid #333 !important; color: #000 !important; font-size: 12px !important; }
     .print-card-bullet { color: #000 !important; }
   }
 `;
