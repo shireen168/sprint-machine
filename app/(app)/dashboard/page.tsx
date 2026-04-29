@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { DeleteSprintButton } from '@/components/dashboard/delete-sprint-button';
+import { NewSprintButton } from '@/components/dashboard/new-sprint-button';
 
 const formatSprintTitle = (title: string) => {
   const productName = title.split(' - ')[0];
@@ -20,6 +21,20 @@ export default async function DashboardPage() {
   }
 
   const supabase = createServiceClient();
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
+  // Fetch user's sprint count
+  const { data: userRow } = await supabase
+    .from('users')
+    .select('sprint_count_this_month, sprint_month')
+    .eq('id', userId)
+    .single() as any;
+
+  const effectiveCount = userRow?.sprint_month !== currentMonth ? 0 : (userRow?.sprint_count_this_month ?? 0);
+  const nextReset = new Date();
+  nextReset.setMonth(nextReset.getMonth() + 1, 1);
+  nextReset.setHours(0, 0, 0, 0);
+  const nextResetDate = nextReset.toISOString().slice(0, 10);
 
   // Fetch sprints for this user
   const { data: sprintsData } = await supabase
@@ -41,9 +56,11 @@ export default async function DashboardPage() {
           <h1 className="font-display text-3xl font-bold text-text-1">Your Sprints</h1>
           <p className="mt-1 text-text-2">Latest sprints appear first.</p>
         </div>
-        <Link href="/sprint/new" className={buttonClass}>
-          New Sprint
-        </Link>
+        <NewSprintButton
+          sprintsUsed={effectiveCount}
+          limit={2}
+          nextResetDate={nextResetDate}
+        />
       </div>
 
       {!hasSprints ? (

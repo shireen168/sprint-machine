@@ -6,24 +6,11 @@ import { validateIntake } from '@/lib/input-validation';
 import { logger } from '@/lib/logger';
 import type { IntakeValues } from '@/lib/sprint-wizard-config';
 import { NextRequest, NextResponse } from 'next/server';
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
 
 logger.debug('Initializing generate-sprint endpoint');
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || '',
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
-});
-
-const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(2, '1 d'),
-  analytics: true,
 });
 
 export async function POST(request: NextRequest) {
@@ -32,14 +19,6 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       logger.warn('Unauthorized request to generate-sprint');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { success, remaining, reset } = await ratelimit.limit(`user:${userId}`);
-    if (!success) {
-      return NextResponse.json(
-        { error: `Rate limit exceeded. ${remaining} generations remaining today.` },
-        { status: 429, headers: { 'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)) } }
-      );
     }
 
     logger.debug('Sprint generation requested by user');
@@ -59,6 +38,38 @@ export async function POST(request: NextRequest) {
 
     if (userUpsertError) {
       logger.warn('User upsert failed:', userUpsertError);
+    }
+
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    const { data: userRow, error: userFetchError } = await supabase
+      .from('users')
+      .select('sprint_count_this_month, sprint_month')
+      .eq('id', userId)
+      .single();
+
+    if (userFetchError) {
+      logger.warn('Failed to fetch user sprint count:', userFetchError);
+      return NextResponse.json({ error: 'Failed to check quota' }, { status: 500 });
+    }
+
+    const effectiveCount = userRow?.sprint_month !== currentMonth ? 0 : (userRow?.sprint_count_this_month ?? 0);
+    const limit = 2;
+
+    if (effectiveCount >= limit) {
+      const nextReset = new Date();
+      nextReset.setMonth(nextReset.getMonth() + 1, 1);
+      nextReset.setHours(0, 0, 0, 0);
+      const nextResetDate = nextReset.toISOString().slice(0, 10);
+
+      return NextResponse.json(
+        {
+          error: 'Monthly limit reached',
+          sprints_used: effectiveCount,
+          sprints_remaining: 0,
+          next_reset_date: nextResetDate,
+        },
+        { status: 429 }
+      );
     }
 
     const { data: sprint, error: insertError } = await supabase
@@ -123,7 +134,30 @@ export async function POST(request: NextRequest) {
         throw new Error('Failed to save sprint output');
       }
 
-      return NextResponse.json({ sprintId: sprint.id });
+      const newCount = effectiveCount + 1;
+      const { error: countUpdateError } = await supabase
+        .from('users')
+        .update({
+          sprint_count_this_month: newCount,
+          sprint_month: currentMonth,
+        })
+        .eq('id', userId);
+
+      if (countUpdateError) {
+        logger.warn('Failed to update sprint count:', countUpdateError);
+      }
+
+      const nextReset = new Date();
+      nextReset.setMonth(nextReset.getMonth() + 1, 1);
+      nextReset.setHours(0, 0, 0, 0);
+      const nextResetDate = nextReset.toISOString().slice(0, 10);
+
+      return NextResponse.json({
+        sprintId: sprint.id,
+        sprints_used: newCount,
+        sprints_remaining: limit - newCount,
+        next_reset_date: nextResetDate,
+      });
     } catch (aiError) {
       logger.error('Generation failed:', aiError instanceof Error ? aiError.message : String(aiError));
       await supabase
