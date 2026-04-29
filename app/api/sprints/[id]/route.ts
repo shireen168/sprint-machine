@@ -98,6 +98,15 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     // Handle partial updates (section edits)
     if (body.partialUpdate && body.output) {
+      // Validate output: must be a plain object (not null, not array, not primitive)
+      if (
+        typeof body.output !== 'object' ||
+        body.output === null ||
+        Array.isArray(body.output)
+      ) {
+        return NextResponse.json({ error: 'Invalid output format' }, { status: 400 });
+      }
+
       const { error } = await supabase
         .from('sprints')
         .update({ output: body.output })
@@ -139,16 +148,19 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (!jsonMatch) throw new Error('No JSON found in response');
     const output = JSON.parse(jsonMatch[0]);
 
-    const { error: updateError } = await supabase.from('sprints').update({ status: 'complete', output }).eq('id', id);
+    const { error: updateError } = await supabase.from('sprints').update({ status: 'complete', output }).eq('id', id).eq('user_id', userId);
 
     if (updateError) throw new Error('Failed to save sprint');
 
     return NextResponse.json({ sprintId: id });
   } catch (error) {
     logger.error('Patch operation failed:', error instanceof Error ? error.message : String(error));
+    const { userId } = await auth();
     const { id } = await params;
     const supabase = createServiceClient() as any;
-    await supabase.from('sprints').update({ status: 'failed' }).eq('id', id);
+    if (userId) {
+      await supabase.from('sprints').update({ status: 'failed' }).eq('id', id).eq('user_id', userId);
+    }
     return NextResponse.json({ error: 'Operation failed' }, { status: 500 });
   }
 }

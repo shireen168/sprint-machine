@@ -10,7 +10,7 @@ export function DownloadPdfButton() {
 
   const handleDownload = () => {
     if (sprintId) {
-      const printWindow = window.open(`/sprint/${sprintId}/print`, '_blank');
+      const printWindow = window.open(`/sprint/${sprintId}/print?v=${Date.now()}`, '_blank');
       if (printWindow) {
         printWindow.addEventListener('load', () => {
           setTimeout(() => {
@@ -27,7 +27,7 @@ export function DownloadPdfButton() {
       size="sm"
       variant="ghost"
       className="text-text-2 hover:text-text-1"
-      title="Download sprint as PDF"
+      title="Opens print preview - in the dialog, select 'Save as PDF' as the destination"
     >
       <Download className="w-4 h-4 mr-2" />
       Download

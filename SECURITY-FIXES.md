@@ -542,18 +542,22 @@ export async function POST(request: NextRequest) {
 
 ## Deployment Checklist
 
-- [ ] Install/configure Upstash Redis for rate limiting
-- [ ] Add rate limiting middleware to all API routes
-- [ ] Add input validation to all intake fields
-- [ ] Remove all sensitive logging (keys, emails, IDs)
-- [ ] Gate `/api/dev-create-sprint` with `NODE_ENV` check
+- [x] Install/configure Upstash Redis for rate limiting
+- [x] Add rate limiting middleware to all API routes (guest: 1/hour, auth: 2/day)
+- [x] Add input validation to all intake fields (validateIntake + partialUpdate schema)
+- [x] Remove all sensitive logging (keys, emails, IDs) - logger utility in place
+- [x] Gate `/api/dev-create-sprint` with `NODE_ENV` check
+- [x] Enable Supabase RLS on users, sprints, api_usage_log tables
+- [x] Fix PATCH race condition - user_id constraint added to final update
+- [x] Delete unprotected `/api/test` endpoint
+- [x] Fix PDF print CSS conflicts - globals.css cleaned, sprint-print-styles.ts owns all print CSS
 - [ ] Deploy cost monitoring table to Supabase
 - [ ] Set up cost alerts (80% threshold)
-- [ ] Test rate limiting limits in staging
+- [ ] Test rate limiting in staging via Upstash Redis config
 - [ ] Test input validation with injection payloads
 - [ ] Verify logs don't contain secrets in production
 - [ ] Plan paid tier implementation before scaling
-- [ ] Run full audit again to verify fixes
+- [ ] Run full audit again post-deployment (2026-04-29)
 
 ---
 

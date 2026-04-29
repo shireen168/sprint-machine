@@ -17,11 +17,6 @@ export default function PrintLayout({ children }: { children: ReactNode }) {
           margin: 0 !important;
           padding: 0 !important;
         }
-        @media print {
-          body {
-            background: white !important;
-          }
-        }
       `}</style>
       {children}
     </div>

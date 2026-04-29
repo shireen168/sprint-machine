@@ -2,7 +2,8 @@ export const printStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
   @page {
-    margin: 0.5in 0.5in 0.5in 0.5in;
+    margin: 1.5cm;
+    size: A4;
   }
 
   .sprint-print-template {

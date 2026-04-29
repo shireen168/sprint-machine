@@ -361,11 +361,16 @@ IP-based (guest):
 
 ## Verification Checklist
 
-- [ ] Rate limiting implemented on `/api/generate-sprint-guest`
-- [ ] Rate limiting implemented on `/api/generate-sprint`
-- [ ] Rate limiting implemented on `PATCH /api/sprints/[id]`
-- [ ] Input validation added (server-side)
-- [ ] Sensitive logging removed from production
+- [x] Rate limiting implemented on `/api/generate-sprint-guest` (1/hour per IP)
+- [x] Rate limiting implemented on `/api/generate-sprint` (2/day per user)
+- [x] Rate limiting implemented on `PATCH /api/sprints/[id]` (2/day per user, regen path only)
+- [x] Input validation added (server-side) - validateIntake() + partialUpdate schema check
+- [x] Sensitive logging removed from production - logger utility in place
+- [x] Supabase RLS enabled on users, sprints, api_usage_log tables
+- [x] GET /api/test unprotected endpoint deleted
+- [x] PATCH race condition fixed - final update now includes user_id constraint
+- [x] partialUpdate path output validation added (object type check)
+- [x] PDF print CSS conflicts resolved (globals.css @media print removed)
 - [ ] Cost monitoring dashboard set up
 - [ ] Paid tier billing implemented (before scaling)
-- [ ] Rerun audit to verify fixes
+- [ ] Rerun full audit post-deployment
