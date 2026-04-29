@@ -2,8 +2,17 @@ export const printStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
   @page {
-    margin: 1.5cm;
+    margin: 2.5cm 1.5cm;
     size: A4;
+  }
+
+  @page {
+    @top-left { content: none; }
+    @top-center { content: none; }
+    @top-right { content: none; }
+    @bottom-left { content: none; }
+    @bottom-center { content: none; }
+    @bottom-right { content: none; }
   }
 
   .sprint-print-template {
@@ -352,7 +361,8 @@ export const printStyles = `
   }
 
   @media print {
-    .sprint-print-template { background: #fff !important; color: #000 !important; width: 100% !important; min-height: auto !important; padding: 20px 30px !important; }
+    .sprint-print-template { background: #fff !important; color: #000 !important; width: 100% !important; min-height: auto !important; padding: 20px 30px !important; orphans: 3; widows: 3; }
+    span[style*="00C8FF"], div[style*="00C8FF"], strong[style*="00C8FF"] { color: #000 !important; }
     .print-header { border-top: none !important; margin-bottom: 24px !important; }
     .print-header h1 { color: #000 !important; font-size: 28px !important; }
     .print-header p { color: #333 !important; border: none !important; font-size: 13px !important; }

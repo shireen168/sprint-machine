@@ -73,7 +73,11 @@ export default async function SprintPage({ params }: PageProps) {
     )
   }
 
-  const displayTitle = sprint.title.split(' - ')[0];
+  const displayTitle = sprint.title
+    .split(' - ')[0]
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 
   return (
     <SprintDocLayout sprintId={id}>
