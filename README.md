@@ -75,4 +75,4 @@ UPSTASH_REDIS_REST_TOKEN=
 
 ## License
 
-Open source. Built as a portfolio project.
+Open source. 

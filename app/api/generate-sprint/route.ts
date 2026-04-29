@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       .upsert({ id: userId, email: userEmail }, { onConflict: 'id' });
 
     if (userUpsertError) {
-      logger.warn('User upsert failed');
+      logger.warn('User upsert failed:', userUpsertError);
     }
 
     const { data: sprint, error: insertError } = await supabase
@@ -75,8 +75,8 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError || !sprint) {
-      logger.error('Sprint creation failed');
-      return NextResponse.json({ error: 'Failed to create sprint' }, { status: 500 });
+      logger.error('Sprint creation failed:', insertError);
+      return NextResponse.json({ error: 'Failed to create sprint', details: insertError?.message }, { status: 500 });
     }
 
     try {

@@ -63,7 +63,7 @@ function validateField(value: string, fieldName: string, maxLength: number): str
 }
 
 function validatePlatforms(platforms: any): string[] {
-  const ALLOWED_PLATFORMS = ['Instagram', 'LinkedIn', 'Email', 'TikTok', 'Twitter', 'YouTube', 'Facebook'];
+  const ALLOWED_PLATFORMS_LOWERCASE = ['instagram', 'linkedin', 'email', 'tiktok', 'twitter', 'youtube', 'facebook', 'bluesky'];
 
   if (!Array.isArray(platforms)) {
     throw new Error('platforms must be an array');
@@ -73,5 +73,10 @@ function validatePlatforms(platforms: any): string[] {
     throw new Error('Invalid platform selection');
   }
 
-  return platforms.filter(p => ALLOWED_PLATFORMS.includes(p));
+  const validated = platforms.filter(p => ALLOWED_PLATFORMS_LOWERCASE.includes(p.toLowerCase()));
+  if (validated.length === 0) {
+    throw new Error('No valid platforms selected');
+  }
+
+  return validated;
 }
